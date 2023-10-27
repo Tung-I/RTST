@@ -27,10 +27,10 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/tungi/RTS-testbed/Samples/NvCodec/NvDecoder/NvDecoder.cpp" "Ringmaster/CMakeFiles/sender.dir/__/NvCodec/NvDecoder/NvDecoder.cpp.o" "gcc" "Ringmaster/CMakeFiles/sender.dir/__/NvCodec/NvDecoder/NvDecoder.cpp.o.d"
   "/home/tungi/RTS-testbed/Samples/NvCodec/NvEncoder/NvEncoder.cpp" "Ringmaster/CMakeFiles/sender.dir/__/NvCodec/NvEncoder/NvEncoder.cpp.o" "gcc" "Ringmaster/CMakeFiles/sender.dir/__/NvCodec/NvEncoder/NvEncoder.cpp.o.d"
   "/home/tungi/RTS-testbed/Samples/NvCodec/NvEncoder/NvEncoderCuda.cpp" "Ringmaster/CMakeFiles/sender.dir/__/NvCodec/NvEncoder/NvEncoderCuda.cpp.o" "gcc" "Ringmaster/CMakeFiles/sender.dir/__/NvCodec/NvEncoder/NvEncoderCuda.cpp.o.d"
+  "/home/tungi/RTS-testbed/Samples/Ringmaster/nv_encoder.cc" "Ringmaster/CMakeFiles/sender.dir/nv_encoder.cc.o" "gcc" "Ringmaster/CMakeFiles/sender.dir/nv_encoder.cc.o.d"
   "/home/tungi/RTS-testbed/Samples/Ringmaster/protocol.cc" "Ringmaster/CMakeFiles/sender.dir/protocol.cc.o" "gcc" "Ringmaster/CMakeFiles/sender.dir/protocol.cc.o.d"
   "/home/tungi/RTS-testbed/Samples/Ringmaster/sender.cpp" "Ringmaster/CMakeFiles/sender.dir/sender.cpp.o" "gcc" "Ringmaster/CMakeFiles/sender.dir/sender.cpp.o.d"
   "/home/tungi/RTS-testbed/Samples/Ringmaster/vp9_decoder.cc" "Ringmaster/CMakeFiles/sender.dir/vp9_decoder.cc.o" "gcc" "Ringmaster/CMakeFiles/sender.dir/vp9_decoder.cc.o.d"
-  "/home/tungi/RTS-testbed/Samples/Ringmaster/vp9_encoder.cc" "Ringmaster/CMakeFiles/sender.dir/vp9_encoder.cc.o" "gcc" "Ringmaster/CMakeFiles/sender.dir/vp9_encoder.cc.o.d"
   )
 
 # Targets to which this target links.

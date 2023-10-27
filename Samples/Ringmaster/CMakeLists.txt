@@ -38,8 +38,10 @@ set(NV_ENC_HDRS
 )
 
 set (RM_SOURCES
- ${RM_APP_DIR}/vp9_encoder.cc
+#  ${RM_APP_DIR}/vp9_encoder.cc
  ${RM_APP_DIR}/vp9_decoder.cc
+ ${RM_APP_DIR}/nv_encoder.cc
+#  ${RM_APP_DIR}/nv_decoder.cc
  ${RM_APP_DIR}/protocol.cc
  ${RM_UTILS_DIR}/address.cc
  ${RM_UTILS_DIR}/conversion.cc
@@ -57,13 +59,13 @@ set (RM_SOURCES
  ${RM_VIDEO_DIR}/sdl.cc
  ${RM_VIDEO_DIR}/v4l2.cc
  ${RM_VIDEO_DIR}/yuv4mpeg.cc
-#  ${RM_VIDEO_DIR}/yuv4mpeg_fd.cc
-#  ${RM_VIDEO_DIR}/yuv4mpeg_v1.cc
 )
 
 set (RM_HDRS
- ${RM_APP_DIR}/vp9_encoder.hh
+#  ${RM_APP_DIR}/vp9_encoder.hh
  ${RM_APP_DIR}/vp9_decoder.hh
+ ${RM_APP_DIR}/nv_encoder.hh
+#  ${RM_APP_DIR}/nv_decoder.hh
  ${RM_APP_DIR}/protocol.hh
  ${RM_UTILS_DIR}/address.hh
  ${RM_UTILS_DIR}/conversion.hh
@@ -83,8 +85,6 @@ set (RM_HDRS
  ${RM_VIDEO_DIR}/v4l2.hh
  ${RM_VIDEO_DIR}/video_input.hh
  ${RM_VIDEO_DIR}/yuv4mpeg.hh
-#  ${RM_VIDEO_DIR}/yuv4mpeg_fd.hh
-#  ${RM_VIDEO_DIR}/yuv4mpeg_v1.hh
 )
 
 set(NV_ENC_CUDA_UTILS

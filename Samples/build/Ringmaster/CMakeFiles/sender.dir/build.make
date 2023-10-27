@@ -263,24 +263,10 @@ Ringmaster/CMakeFiles/sender.dir/sender.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/sender.dir/sender.cpp.s"
 	cd /home/tungi/RTS-testbed/Samples/build/Ringmaster && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tungi/RTS-testbed/Samples/Ringmaster/sender.cpp -o CMakeFiles/sender.dir/sender.cpp.s
 
-Ringmaster/CMakeFiles/sender.dir/vp9_encoder.cc.o: Ringmaster/CMakeFiles/sender.dir/flags.make
-Ringmaster/CMakeFiles/sender.dir/vp9_encoder.cc.o: ../Ringmaster/vp9_encoder.cc
-Ringmaster/CMakeFiles/sender.dir/vp9_encoder.cc.o: Ringmaster/CMakeFiles/sender.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/tungi/RTS-testbed/Samples/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object Ringmaster/CMakeFiles/sender.dir/vp9_encoder.cc.o"
-	cd /home/tungi/RTS-testbed/Samples/build/Ringmaster && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Ringmaster/CMakeFiles/sender.dir/vp9_encoder.cc.o -MF CMakeFiles/sender.dir/vp9_encoder.cc.o.d -o CMakeFiles/sender.dir/vp9_encoder.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/vp9_encoder.cc
-
-Ringmaster/CMakeFiles/sender.dir/vp9_encoder.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/sender.dir/vp9_encoder.cc.i"
-	cd /home/tungi/RTS-testbed/Samples/build/Ringmaster && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tungi/RTS-testbed/Samples/Ringmaster/vp9_encoder.cc > CMakeFiles/sender.dir/vp9_encoder.cc.i
-
-Ringmaster/CMakeFiles/sender.dir/vp9_encoder.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/sender.dir/vp9_encoder.cc.s"
-	cd /home/tungi/RTS-testbed/Samples/build/Ringmaster && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tungi/RTS-testbed/Samples/Ringmaster/vp9_encoder.cc -o CMakeFiles/sender.dir/vp9_encoder.cc.s
-
 Ringmaster/CMakeFiles/sender.dir/vp9_decoder.cc.o: Ringmaster/CMakeFiles/sender.dir/flags.make
 Ringmaster/CMakeFiles/sender.dir/vp9_decoder.cc.o: ../Ringmaster/vp9_decoder.cc
 Ringmaster/CMakeFiles/sender.dir/vp9_decoder.cc.o: Ringmaster/CMakeFiles/sender.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/tungi/RTS-testbed/Samples/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object Ringmaster/CMakeFiles/sender.dir/vp9_decoder.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/tungi/RTS-testbed/Samples/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object Ringmaster/CMakeFiles/sender.dir/vp9_decoder.cc.o"
 	cd /home/tungi/RTS-testbed/Samples/build/Ringmaster && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Ringmaster/CMakeFiles/sender.dir/vp9_decoder.cc.o -MF CMakeFiles/sender.dir/vp9_decoder.cc.o.d -o CMakeFiles/sender.dir/vp9_decoder.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/vp9_decoder.cc
 
 Ringmaster/CMakeFiles/sender.dir/vp9_decoder.cc.i: cmake_force
@@ -290,6 +276,20 @@ Ringmaster/CMakeFiles/sender.dir/vp9_decoder.cc.i: cmake_force
 Ringmaster/CMakeFiles/sender.dir/vp9_decoder.cc.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/sender.dir/vp9_decoder.cc.s"
 	cd /home/tungi/RTS-testbed/Samples/build/Ringmaster && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tungi/RTS-testbed/Samples/Ringmaster/vp9_decoder.cc -o CMakeFiles/sender.dir/vp9_decoder.cc.s
+
+Ringmaster/CMakeFiles/sender.dir/nv_encoder.cc.o: Ringmaster/CMakeFiles/sender.dir/flags.make
+Ringmaster/CMakeFiles/sender.dir/nv_encoder.cc.o: ../Ringmaster/nv_encoder.cc
+Ringmaster/CMakeFiles/sender.dir/nv_encoder.cc.o: Ringmaster/CMakeFiles/sender.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/tungi/RTS-testbed/Samples/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object Ringmaster/CMakeFiles/sender.dir/nv_encoder.cc.o"
+	cd /home/tungi/RTS-testbed/Samples/build/Ringmaster && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Ringmaster/CMakeFiles/sender.dir/nv_encoder.cc.o -MF CMakeFiles/sender.dir/nv_encoder.cc.o.d -o CMakeFiles/sender.dir/nv_encoder.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/nv_encoder.cc
+
+Ringmaster/CMakeFiles/sender.dir/nv_encoder.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/sender.dir/nv_encoder.cc.i"
+	cd /home/tungi/RTS-testbed/Samples/build/Ringmaster && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tungi/RTS-testbed/Samples/Ringmaster/nv_encoder.cc > CMakeFiles/sender.dir/nv_encoder.cc.i
+
+Ringmaster/CMakeFiles/sender.dir/nv_encoder.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/sender.dir/nv_encoder.cc.s"
+	cd /home/tungi/RTS-testbed/Samples/build/Ringmaster && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tungi/RTS-testbed/Samples/Ringmaster/nv_encoder.cc -o CMakeFiles/sender.dir/nv_encoder.cc.s
 
 Ringmaster/CMakeFiles/sender.dir/protocol.cc.o: Ringmaster/CMakeFiles/sender.dir/flags.make
 Ringmaster/CMakeFiles/sender.dir/protocol.cc.o: ../Ringmaster/protocol.cc
@@ -574,8 +574,8 @@ Ringmaster/CMakeFiles/sender.dir/__/NvCodec/NvDecoder/NvDecoder.cpp.s: cmake_for
 # Object files for target sender
 sender_OBJECTS = \
 "CMakeFiles/sender.dir/sender.cpp.o" \
-"CMakeFiles/sender.dir/vp9_encoder.cc.o" \
 "CMakeFiles/sender.dir/vp9_decoder.cc.o" \
+"CMakeFiles/sender.dir/nv_encoder.cc.o" \
 "CMakeFiles/sender.dir/protocol.cc.o" \
 "CMakeFiles/sender.dir/Utils/address.cc.o" \
 "CMakeFiles/sender.dir/Utils/conversion.cc.o" \
@@ -602,8 +602,8 @@ sender_EXTERNAL_OBJECTS = \
 "/home/tungi/RTS-testbed/Samples/build/Ringmaster/CMakeFiles/sender.dir/__/Utils/sender_generated_ColorSpace.cu.o"
 
 Ringmaster/sender: Ringmaster/CMakeFiles/sender.dir/sender.cpp.o
-Ringmaster/sender: Ringmaster/CMakeFiles/sender.dir/vp9_encoder.cc.o
 Ringmaster/sender: Ringmaster/CMakeFiles/sender.dir/vp9_decoder.cc.o
+Ringmaster/sender: Ringmaster/CMakeFiles/sender.dir/nv_encoder.cc.o
 Ringmaster/sender: Ringmaster/CMakeFiles/sender.dir/protocol.cc.o
 Ringmaster/sender: Ringmaster/CMakeFiles/sender.dir/Utils/address.cc.o
 Ringmaster/sender: Ringmaster/CMakeFiles/sender.dir/Utils/conversion.cc.o

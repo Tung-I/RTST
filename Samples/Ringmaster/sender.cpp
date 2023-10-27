@@ -13,7 +13,8 @@
 #include "Utils/poller.hh"
 #include "Video/yuv4mpeg.hh"
 #include "protocol.hh"
-#include "vp9_encoder.hh"
+// #include "vp9_encoder.hh"
+#include "nv_encoder.hh"
 #include "Utils/timestamp.hh"
 
 #include "NvCodecUtils.h"
@@ -173,7 +174,7 @@ int main(int argc, char * argv[])
       }
 
       // debug
-      auto ts_before_reading = timestamp_us();   
+      // auto ts_before_reading = timestamp_us();   
 
       for (unsigned int i = 0; i < num_exp; i++) {
         // fetch a raw frame into 'raw_img' from the video input
@@ -182,8 +183,8 @@ int main(int argc, char * argv[])
         }
       }
 
-      auto ts_after_reading = timestamp_us();
-      cerr << "Reading time: " << ts_after_reading - ts_before_reading << endl;
+      // auto ts_after_reading = timestamp_us();
+      // cerr << "Reading time: " << ts_after_reading - ts_before_reading << endl;
 
       // compress 'raw_img' into frame 'frame_id' and packetize it
       encoder.compress_frame(raw_img);

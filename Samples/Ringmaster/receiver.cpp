@@ -11,6 +11,7 @@
 #include "Video/sdl.hh"
 #include "protocol.hh"
 #include "vp9_decoder.hh"
+// #include "nv_decoder.hh"
 
 #include "NvCodecUtils.h"
 
