@@ -29,11 +29,6 @@
 #include "protocol.hh"
 #include "file_descriptor.hh" 
 
-extern "C" {
-#include <vpx/vpx_encoder.h>
-#include <vpx/vp8cx.h>
-} 
-
 class Encoder
 {
 public:
@@ -45,7 +40,7 @@ public:
   ~Encoder();
 
   // encode raw_img and packetize into datagrams
-  void compress_frame(const RawImage & raw_img);
+  void compress_frame(const std::unique_ptr<uint8_t[]>& pHostFrame);
 
   // add a transmitted but unacked datagram (except retransmissions) to unacked
   void add_unacked(const FrameDatagram & datagram);
@@ -78,15 +73,31 @@ private:
   uint16_t frame_rate_;
   std::optional<FileDescriptor> output_fd_;
 
+  // nv codec
+  NvEncoderInitParam pEncodeCLIOptions;
+  NV_ENC_BUFFER_FORMAT eInputFormat;
+  OutputFormat eOutputFormat;
+  int iGpu;
+  bool bBgra64;
+  std::exception_ptr encExceptionPtr;
+  std::exception_ptr decExceptionPtr;
+  CUcontext cuContext {NULL};
+  NV_ENC_INITIALIZE_PARAMS initializeParams = { NV_ENC_INITIALIZE_PARAMS_VER }; 
+  NV_ENC_CONFIG encodeConfig = { NV_ENC_CONFIG_VER };
+  
+  NvEncoderCuda enc;  
+
+  const NvEncInputFrame* encoderInputFrame
+  std::vector<std::vector<uint8_t>> vPacket; 
+  NV_ENC_PIC_PARAMS *pPicParams
+  
+  
+
   // print debugging info
   bool verbose_ {false};
 
   // current target bitrate
   unsigned int target_bitrate_ {0};
-
-  // VPX encoding configuration and context
-  vpx_codec_enc_cfg_t cfg_ {};
-  vpx_codec_ctx_t context_ {};
 
   // frame ID to encode
   uint32_t frame_id_ {0};
@@ -115,19 +126,11 @@ private:
   void add_rtt_sample(const unsigned int rtt_us);
 
   // encode the raw frame stored in 'raw_img'
-  void encode_frame(const RawImage & raw_img);
+  void encode_frame(const std::unique_ptr<uint8_t[]>& pHostFrame)
 
   // packetize the just encoded frame (stored in context_) and return its size
   size_t packetize_encoded_frame(uint16_t width, uint16_t height);
 
-  // VPX API wrappers
-  // vpx_codec_control(ctx,id,data): macro allows for type safe conversions across the variadic parameter
-  template <typename ... Args>
-  inline void codec_control(Args && ... args)  
-  {
-    check_call(vpx_codec_control_(std::forward<Args>(args)...),
-               VPX_CODEC_OK, "vpx_codec_control_");
-  }
 };
 
 #endif /* ENCODER_HH */

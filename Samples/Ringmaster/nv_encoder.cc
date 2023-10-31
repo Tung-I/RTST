@@ -11,8 +11,29 @@
 #include "conversion.hh"
 #include "timestamp.hh"
 
-using namespace std;
-using namespace chrono;
+#include <cuda.h>
+#include <iomanip>
+#include <exception>
+#include <memory>
+#include <functional>
+#include <stdint.h>
+#include "NvDecoder/NvDecoder.h"
+#include "NvEncoder/NvEncoderCuda.h"
+#include "../Utils/NvEncoderCLIOptions.h"
+#include "../Utils/NvCodecUtils.h"
+#include "../Utils/FFmpegStreamer.h"
+#include "../Utils/FFmpegDemuxer.h"
+#include "../Utils/ColorSpace.h"
+
+enum OutputFormat
+{
+    native = 0, bgra, bgra64
+};
+
+std::vector<std::string> vstrOutputFormatName = 
+{
+    "native", "bgra", "bgra64"
+};
 
 Encoder::Encoder(const uint16_t default_width,
                  const uint16_t default_height,
@@ -27,80 +48,71 @@ Encoder::Encoder(const uint16_t default_width,
         open(output_path.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644)));
   }
 
-  // populate VP9 configuration with default values
-  check_call(vpx_codec_enc_config_default(&vpx_codec_vp9_cx_algo, &cfg_, 0),
-             VPX_CODEC_OK, "vpx_codec_enc_config_default");
+  // initialize encoder parameters
+  std::string CommandLineParam = 
+    "-i /home/tungi/datasets/SJTU8K/4k_runner_pano_8s.yuv -o /home/tungi/datasets/SJTU8K/4k_runner_pano_8s.nv12 -s 4096x2048 -if iyuv -of nv12 -codec hevc -gpu 0"
+  pEncodeCLIOptions = NvEncoderInitParam(CommandLineParam.c_str(), NULL);
+  eInputFormat = NV_ENC_BUFFER_FORMAT_IYUV;
+  eOutputFormat = native;
 
+  iGpu = 0;
+  bgra64 = false;
+  ValidateResolution(default_width, default_height);
 
-  // copy the configuration below mostly from WebRTC (libvpx_vp9_encoder.cc)
-  cfg_.g_w = default_width_;
-  cfg_.g_h = default_height_;
-  cfg_.g_timebase.num = 1;
-  cfg_.g_timebase.den = frame_rate_; // WebRTC uses a 90 kHz clock
-  cfg_.g_pass = VPX_RC_ONE_PASS;
-  cfg_.g_lag_in_frames = 0; // disable lagged encoding
-  // WebRTC disables error resilient mode unless for SVC
-  cfg_.g_error_resilient = VPX_ERROR_RESILIENT_DEFAULT;
-  cfg_.g_threads = 4; // encoder threads; should equal to column tiles below
-  cfg_.rc_resize_allowed = 0; // WebRTC enables spatial sampling
-  cfg_.rc_dropframe_thresh = 0; // WebRTC sets to 30 (% of target data buffer)
-  cfg_.rc_buf_initial_sz = 500;
-  cfg_.rc_buf_optimal_sz = 600;
-  cfg_.rc_buf_sz = 1000;
-  cfg_.rc_min_quantizer = 2;
-  cfg_.rc_max_quantizer = 52;
-  cfg_.rc_undershoot_pct = 50;
-  cfg_.rc_overshoot_pct = 50;
+  // Check cuda device
+  ck(cuInit(0));
+  int nGpu = 0;
+  ck(cuDeviceGetCount(&nGpu));
+  if (iGpu < 0 || iGpu >= nGpu) {
+      std::cout << "GPU ordinal out of range. Should be within [" << 0 << ", " << nGpu - 1 << "]" << std::endl;
+      return 1;
+  }
+  CUdevice cuDevice = 0;
+  ck(cuDeviceGet(&cuDevice, iGpu));
+  char szDeviceName[80];
+  ck(cuDeviceGetName(szDeviceName, sizeof(szDeviceName), cuDevice));
+  std::cout << "GPU in use: " << szDeviceName << std::endl;
 
-  // prevent libvpx encoder from automatically placing key frames
-  cfg_.kf_mode = VPX_KF_DISABLED;
-  // WebRTC sets the two values below to 3000 frames (fixed keyframe interval)
-  cfg_.kf_max_dist = numeric_limits<unsigned int>::max();
-  cfg_.kf_min_dist = 0;
+  // Create cuda encoder interface
+  ck(cuCtxCreate(cuContext, 0, cuDevice));  
+  enc = NvEncoderCuda(cuContext, default_width, default_height, 
+    eInputFormat, 3, false, false, false);
 
-  cfg_.rc_end_usage = VPX_CBR;
-  cfg_.rc_target_bitrate = target_bitrate_;
+  // Set the config and initialize params
+  initializeParams.encodeConfig = &encodeConfig; 
+  enc.CreateDefaultEncoderParams(&initializeParams, pEncodeCLIOptions->GetEncodeGUID(), 
+      pEncodeCLIOptions->GetPresetGUID(), pEncodeCLIOptions->GetTuningInfo());
+  encodeConfig.gopLength = NVENC_INFINITE_GOPLENGTH;
+  encodeConfig.frameIntervalP = 1;
 
-  // use no more than 16 or the number of avaialble CPUs
-  const unsigned int cpu_used = min(get_nprocs(), 16);
+  if (pEncodeCLIOptions->IsCodecH264())
+  {
+    encodeConfig.encodeCodecConfig.h264Config.idrPeriod = NVENC_INFINITE_GOPLENGTH;
+  }
+  else if (pEncodeCLIOptions->IsCodecHEVC())
+  {
+    encodeConfig.encodeCodecConfig.hevcConfig.idrPeriod = NVENC_INFINITE_GOPLENGTH;
+  }
+	else
+	{
+		encodeConfig.encodeCodecConfig.av1Config.idrPeriod = NVENC_INFINITE_GOPLENGTH;
+	}
+  
+  encodeConfig.rcParams.rateControlMode = NV_ENC_PARAMS_RC_CBR;
+  encodeConfig.rcParams.multiPass = NV_ENC_MULTI_PASS_DISABLED;
+  encodeConfig.rcParams.averageBitRate = (static_cast<unsigned int>(5.0f * initializeParams.encodeWidth * initializeParams.encodeHeight) / (1280 * 720)) * 100000;
+  encodeConfig.rcParams.vbvBufferSize = (encodeConfig.rcParams.averageBitRate * initializeParams.frameRateDen / initializeParams.frameRateNum) * 5;  // 5-frame length
+  encodeConfig.rcParams.maxBitRate = encodeConfig.rcParams.averageBitRate;
+  encodeConfig.rcParams.vbvInitialDelay = encodeConfig.rcParams.vbvBufferSize;
 
-  // more encoder settings
-  check_call(vpx_codec_enc_init(&context_, &vpx_codec_vp9_cx_algo, &cfg_, 0),
-             VPX_CODEC_OK, "vpx_codec_enc_init");
+  pEncodeCLIOptions->SetInitParams(&initializeParams, eInputFormat);
+  enc.CreateEncoder(&initializeParams);
 
-  // this value affects motion estimation and *dominates* the encoding speed
-  codec_control(&context_, VP8E_SET_CPUUSED, cpu_used);
+  // Allocate frame container on host memory
+  nHostFrameSize = bBgra64 ? nWidth * nHeight * 8 : enc.GetFrameSize(); 
+  pHostFrame = std::unique_ptr<uint8_t[]>(new uint8_t[nHostFrameSize]);
 
-  // enable encoder to skip static/low content blocks
-  codec_control(&context_, VP8E_SET_STATIC_THRESHOLD, 1);
-
-  // clamp the max bitrate of a keyframe to 900% of average per-frame bitrate
-  codec_control(&context_, VP8E_SET_MAX_INTRA_BITRATE_PCT, 900);
-
-  // enable encoder to adaptively change QP for each segment within a frame
-  codec_control(&context_, VP9E_SET_AQ_MODE, 3);
-
-  // set the number of column tiles in encoding a frame to 2 ** 2 = 4
-  codec_control(&context_, VP9E_SET_TILE_COLUMNS, 2);
-
-  // enable row-based multi-threading
-  codec_control(&context_, VP9E_SET_ROW_MT, 1);
-
-  // disable frame parallel decoding
-  codec_control(&context_, VP9E_SET_FRAME_PARALLEL_DECODING, 0);
-
-  // enable denoiser (but not on ARM since optimization is pending)
-  codec_control(&context_, VP9E_SET_NOISE_SENSITIVITY, 1);
-
-  cerr << "Initialized VP9 encoder (CPU used: " << cpu_used << ")" << endl;
-
-  // // interface that allows using real-time rate control
-  // VP9RateControlRtcConfig rctrl_cfg;
-  // rctrl_cfg.width = default_width_;
-  // rctrl_cfg.height = default_height_;
-  // rctrl_cfg.target_bitrate = target_bitrate_
-  // VP9FrameParamsQpRTC frame_params;
-  // std::unique_ptr<VP9RateControlRTC> rc_api = VP9RateControlRTC::Create(rctrl_cfg);
+  
 }
 
 Encoder::~Encoder()
@@ -110,13 +122,19 @@ Encoder::~Encoder()
   }
 }
 
-void Encoder::compress_frame(const RawImage & raw_img)
+void Encoder::compress_frame(const std::unique_ptr<uint8_t[]>& pHostFrame)
 {
 
   const auto frame_generation_ts = timestamp_us();
 
-  // encode raw_img into encoder_pkt buffered in the ctx
-  encode_frame(raw_img);
+  encode_frame(pHostFrame);
+
+  
+  
+  // for each packet
+            for (std::vector<uint8_t> &packet : vPacket) {
+                streamer.Stream(packet.data(), (int)packet.size(), nFrame++);
+            }
 
   // packetize encoder_pkt into datagrams
   const size_t frame_size = packetize_encoded_frame(default_width_, default_height_);
@@ -137,21 +155,10 @@ void Encoder::compress_frame(const RawImage & raw_img)
   frame_id_++;
 }
 
-void Encoder::encode_frame(const RawImage & raw_img)
+void Encoder::encode_frame(const std::unique_ptr<uint8_t[]>& pHostFrame)
 {
-  if (raw_img.display_width() != default_width_ or
-      raw_img.display_height() != default_height_) {
-    cerr << "input image width/height = " << raw_img.display_width() << "/"
-         << raw_img.display_height() << endl;
-    cerr << "encoder image width/height = " << default_width_ << "/"
-         << default_height_ << endl;
-    throw runtime_error("Encoder: image dimensions don't match");
-  }
-
-  // default: normal frame
-  vpx_enc_frame_flags_t encode_flags = 0;
   
-  // cleaning the pacakge buffer before encoding a new frame
+  // flush pacakge buffer before encoding a new frame
   if (not unacked_.empty()) {
     const auto & first_unacked = unacked_.cbegin()->second;
     const auto us_since_first_send = timestamp_us() - first_unacked.send_ts;
@@ -174,6 +181,21 @@ void Encoder::encode_frame(const RawImage & raw_img)
       unacked_.clear();
     }
   }
+
+  // copy raw_img into the encoder input buffer
+  encoderInputFrame = enc.GetNextInputFrame();  // pointer to the next input buffer
+  NvEncoderCuda::CopyToDeviceFrame(cuContext, pHostFrame.get(), 0, (CUdeviceptr)encoderInputFrame->inputPtr,
+                (int)encoderInputFrame->pitch,
+                enc.GetEncodeWidth(),
+                enc.GetEncodeHeight(),
+                CU_MEMORYTYPE_HOST,
+                encoderInputFrame->bufferFormat,
+                encoderInputFrame->chromaOffsets,
+                encoderInputFrame->numChromaPlanes);
+
+  // encode it into vPacket
+  enc.EncodeFrame(vPacket);
+
 
   // encode a frame and calculate encoding time
   const auto encode_start = steady_clock::now();

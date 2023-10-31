@@ -7,15 +7,13 @@ set(CMAKE_DEPENDS_GENERATOR "Unix Makefiles")
 # The top level Makefile was generated from the following files:
 set(CMAKE_MAKEFILE_DEPENDS
   "CMakeCache.txt"
+  "../AppEncode/AppEncDec/CMakeLists.txt"
   "../CMakeLists.txt"
-  "../Ringmaster/CMakeLists.txt"
+  "AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/__/__/Utils/AppEncDec_generated_ColorSpace.cu.o.cmake.pre-gen"
+  "AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/__/__/Utils/AppEncDec_generated_ColorSpace.cu.o.depend"
   "CMakeFiles/3.22.1/CMakeCCompiler.cmake"
   "CMakeFiles/3.22.1/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.22.1/CMakeSystem.cmake"
-  "Ringmaster/CMakeFiles/receiver.dir/__/Utils/receiver_generated_ColorSpace.cu.o.cmake.pre-gen"
-  "Ringmaster/CMakeFiles/receiver.dir/__/Utils/receiver_generated_ColorSpace.cu.o.depend"
-  "Ringmaster/CMakeFiles/sender.dir/__/Utils/sender_generated_ColorSpace.cu.o.cmake.pre-gen"
-  "Ringmaster/CMakeFiles/sender.dir/__/Utils/sender_generated_ColorSpace.cu.o.depend"
   "/usr/share/cmake-3.22/Modules/CMakeCInformation.cmake"
   "/usr/share/cmake-3.22/Modules/CMakeCXXInformation.cmake"
   "/usr/share/cmake-3.22/Modules/CMakeCommonLanguageInclude.cmake"
@@ -55,15 +53,12 @@ set(CMAKE_MAKEFILE_OUTPUTS
 # Byproducts of CMake generate step:
 set(CMAKE_MAKEFILE_PRODUCTS
   "CMakeFiles/CMakeDirectoryInformation.cmake"
-  "Ringmaster/CMakeFiles/sender.dir/__/Utils/sender_generated_ColorSpace.cu.o.cmake.pre-gen"
-  "Ringmaster/CMakeFiles/receiver.dir/__/Utils/receiver_generated_ColorSpace.cu.o.cmake.pre-gen"
-  "Ringmaster/CMakeFiles/sender.dir/__/Utils/sender_generated_ColorSpace.cu.o.Release.cmake"
-  "Ringmaster/CMakeFiles/receiver.dir/__/Utils/receiver_generated_ColorSpace.cu.o.Release.cmake"
-  "Ringmaster/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/__/__/Utils/AppEncDec_generated_ColorSpace.cu.o.cmake.pre-gen"
+  "AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/__/__/Utils/AppEncDec_generated_ColorSpace.cu.o.Release.cmake"
+  "AppEncode/AppEncDec/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "Ringmaster/CMakeFiles/sender.dir/DependInfo.cmake"
-  "Ringmaster/CMakeFiles/receiver.dir/DependInfo.cmake"
+  "AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/DependInfo.cmake"
   )

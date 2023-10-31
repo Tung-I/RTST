@@ -91,7 +91,7 @@ void ParseCommandLine(int argc, char *argv[], char *szInputFileName, int &nWidth
             continue;
         }
         if (!_stricmp(argv[i], "-o")) {
-            if (++i == argc) {
+            if (++i == argc) { 
                 ShowHelpAndExit("-o");
             }
             sprintf(szOutputFileName, "%s", argv[i]);
@@ -151,10 +151,10 @@ void ParseCommandLine(int argc, char *argv[], char *szInputFileName, int &nWidth
             oss << argv[++i] << " ";
         }
     }
+
     // Set VUI parameters for HDR
     std::function<void(NV_ENC_INITIALIZE_PARAMS *pParams)> funcInit = [](NV_ENC_INITIALIZE_PARAMS *pParam)
     {
-
         if (pParam->encodeGUID == NV_ENC_CODEC_HEVC_GUID)
         {
             NV_ENC_CONFIG_HEVC_VUI_PARAMETERS &hevcVUIParameters = pParam->encodeConfig->encodeCodecConfig.hevcConfig.hevcVUIParameters;
@@ -171,11 +171,12 @@ void ParseCommandLine(int argc, char *argv[], char *szInputFileName, int &nWidth
         }
 		else
 		{
-
-		}
+            
+        }
     };
     initParam = NvEncoderInitParam(oss.str().c_str(), (eInputFormat == NV_ENC_BUFFER_FORMAT_UNDEFINED) ? &funcInit : NULL);
 }
+
 
 void EncodeProc(CUdevice cuDevice, int nWidth, int nHeight, NV_ENC_BUFFER_FORMAT eFormat, NvEncoderInitParam *pEncodeCLIOptions,
     bool bBgra64, const char *szInFilePath, const char *szMediaPath, std::exception_ptr &encExceptionPtr) 
@@ -189,20 +190,21 @@ void EncodeProc(CUdevice cuDevice, int nWidth, int nHeight, NV_ENC_BUFFER_FORMAT
 
     try
     {
-        ck(cuCtxCreate(&cuContext, 0, cuDevice));
-        NvEncoderCuda enc(cuContext, nWidth, nHeight, eFormat, 3, false, false, false);
-        NV_ENC_INITIALIZE_PARAMS initializeParams = { NV_ENC_INITIALIZE_PARAMS_VER };
-        /////////////////////////////////
+        ck(cuCtxCreate(&cuContext, 0, cuDevice));  // check the device
+        NvEncoderCuda enc(cuContext, nWidth, nHeight, eFormat, 3, false, false, false);  // create encoder
+        NV_ENC_INITIALIZE_PARAMS initializeParams = { NV_ENC_INITIALIZE_PARAMS_VER };  // init params
+        NV_ENC_CONFIG encodeConfig = { NV_ENC_CONFIG_VER };  // enc config
+        initializeParams.encodeConfig = &encodeConfig;  // put config into init params
 
-        /////////////////////////////////
-        NV_ENC_CONFIG encodeConfig = { NV_ENC_CONFIG_VER };
-        initializeParams.encodeConfig = &encodeConfig;
-        enc.CreateDefaultEncoderParams(&initializeParams, pEncodeCLIOptions->GetEncodeGUID(), pEncodeCLIOptions->GetPresetGUID(), pEncodeCLIOptions->GetTuningInfo());
-
+        // Create default enc params using initialized params and CLI options 
+        enc.CreateDefaultEncoderParams(&initializeParams, pEncodeCLIOptions->GetEncodeGUID(), 
+            pEncodeCLIOptions->GetPresetGUID(), pEncodeCLIOptions->GetTuningInfo());
         pEncodeCLIOptions->SetInitParams(&initializeParams, eFormat);
 
+        // Create encoder using initialized params
         enc.CreateEncoder(&initializeParams);
 
+        // Open input file
         std::ifstream fpIn(szInFilePath, std::ifstream::in | std::ifstream::binary);
         if (!fpIn)
         {
@@ -210,33 +212,33 @@ void EncodeProc(CUdevice cuDevice, int nWidth, int nHeight, NV_ENC_BUFFER_FORMAT
             return;
         }
 
-        int nHostFrameSize = bBgra64 ? nWidth * nHeight * 8 : enc.GetFrameSize();
-        std::unique_ptr<uint8_t[]> pHostFrame(new uint8_t[nHostFrameSize]);
-        CUdeviceptr dpBgraFrame = 0;
+        // Allocate containers for input frame
+        int nHostFrameSize = bBgra64 ? nWidth * nHeight * 8 : enc.GetFrameSize();  // get frame size
+        std::unique_ptr<uint8_t[]> pHostFrame(new uint8_t[nHostFrameSize]);  // create host frame
+        CUdeviceptr dpBgraFrame = 0;  // create pointer to device frame
         ck(cuMemAlloc(&dpBgraFrame, nWidth * nHeight * 8));
-        int nFrame = 0;
+        int nFrame = 0;  // frame counter
+
+        // Create streamer
         std::streamsize nRead = 0;
         FFmpegStreamer streamer(pEncodeCLIOptions->IsCodecH264() ? AV_CODEC_ID_H264 : pEncodeCLIOptions->IsCodecHEVC() ? AV_CODEC_ID_HEVC : AV_CODEC_ID_AV1, nWidth, nHeight, 25, szMediaPath);
         
         do {
-            //////////////////////////
-            uint64_t t0 = timestamp_ms();
-            //////////////////////////
 
-            std::vector<std::vector<uint8_t>> vPacket;
-            nRead = fpIn.read(reinterpret_cast<char*>(pHostFrame.get()), nHostFrameSize).gcount();
+            std::vector<std::vector<uint8_t>> vPacket; 
+            nRead = fpIn.read(reinterpret_cast<char*>(pHostFrame.get()), nHostFrameSize).gcount(); 
             if (nRead == nHostFrameSize) // if not end of file
             {
+                // Get the next available input buffer (device memory)
                 const NvEncInputFrame* encoderInputFrame = enc.GetNextInputFrame();
 
                 if (bBgra64)
                 {
-                    // Color space conversion
                     ck(cuMemcpyHtoD(dpBgraFrame, pHostFrame.get(), nHostFrameSize));
                     Bgra64ToP016((uint8_t *)dpBgraFrame, nWidth * 8, (uint8_t *)encoderInputFrame->inputPtr, encoderInputFrame->pitch, nWidth, nHeight);
                 }
-                else
-                {
+                else  // copy input data from host memory (pHostFrame.get()) to device memory (encoderInputFrame->inputPtr)
+                {   
                     NvEncoderCuda::CopyToDeviceFrame(cuContext, pHostFrame.get(), 0, (CUdeviceptr)encoderInputFrame->inputPtr,
                         (int)encoderInputFrame->pitch,
                         enc.GetEncodeWidth(),
@@ -247,6 +249,7 @@ void EncodeProc(CUdevice cuDevice, int nWidth, int nHeight, NV_ENC_BUFFER_FORMAT
                         encoderInputFrame->numChromaPlanes);
                 }
                 
+                // Encode the uncompressed data, which has been allocated to dencoderInputFrame
                 enc.EncodeFrame(vPacket);
 
             }
@@ -255,20 +258,17 @@ void EncodeProc(CUdevice cuDevice, int nWidth, int nHeight, NV_ENC_BUFFER_FORMAT
                 enc.EndEncode(vPacket);
             }
 
-            ///////////////////////////
-            uint64_t t1 = timestamp_ms();
-            total_enc_time += (t1 - t0);
-            ///////////////////////////
-
+            // for each packet
             for (std::vector<uint8_t> &packet : vPacket) {
                 streamer.Stream(packet.data(), (int)packet.size(), nFrame++);
             }
         } while (nRead == nHostFrameSize);
 
-
+        // Free allocated memory
         ck(cuMemFree(dpBgraFrame));
         dpBgraFrame = 0;
 
+        // Destroy encoder
         enc.DestroyEncoder();
         fpIn.close();
 
@@ -291,18 +291,19 @@ void DecodeProc(CUdevice cuDevice, const char *szMediaUri, OutputFormat eOutputF
     CUdeviceptr dpRgbFrame = 0;
     try
     {
-        uint64_t total_dec_time;
-
+        // Create CUDA context
         CUcontext cuContext = NULL;
         ck(cuCtxCreate(&cuContext, 0, cuDevice));
-
+        // Create FFmpeg demuxer
         FFmpegDemuxer demuxer(szMediaUri);
-        // Output host frame for native format; otherwise output device frame for CUDA processing
+        // Create decoder
         NvDecoder dec(cuContext, eOutputFormat != native, FFmpeg2NvCodecId(demuxer.GetVideoCodec()), true);
 
-        uint8_t *pVideo = NULL;
-        int nVideoBytes = 0;
-        int nFrame = 0;
+        uint8_t *pVideo = NULL;  // pointer to the data buffer that is to be decoded
+        int nVideoBytes = 0;  // size of the data buffer in bytes
+        int nFrame = 0;  // frame counter
+
+        // Open output file
         std::ofstream fpOut(szOutFilePath, std::ios::out | std::ios::binary);
         if (!fpOut)
         {
@@ -311,9 +312,10 @@ void DecodeProc(CUdevice cuDevice, const char *szMediaUri, OutputFormat eOutputF
             throw std::invalid_argument(err.str());
         }
 
+        // Figure out the bytes per pixel and allocate memory for the RGB frame
         const char *szTail = "\xe0\x00\x00\x00\x01\xce\x8c\x4d\x9d\x10\x8e\x25\xe9\xfe";
         int nWidth = demuxer.GetWidth(), nHeight = demuxer.GetHeight();
-        std::unique_ptr<uint8_t[]> pRgbFrame;
+        std::unique_ptr<uint8_t[]> pRgbFrame;  // pointer to the RGB frame (host memory)
         int nRgbFramePitch = 0, nRgbFrameSize = 0;
         if (eOutputFormat != native) {
             nRgbFramePitch = nWidth * (eOutputFormat == bgra ? 4 : 8);
@@ -323,37 +325,35 @@ void DecodeProc(CUdevice cuDevice, const char *szMediaUri, OutputFormat eOutputF
         }
 
         do {
-            demuxer.Demux(&pVideo, &nVideoBytes);
+            // demux next chunk of data (loop until nVideoBytes is zero)
+            demuxer.Demux(&pVideo, &nVideoBytes);  
             uint8_t *pFrame;
             int nFrameReturned = 0;
+
+            // Decode the chunk into NV12/P010/BGRA frames and get nFrameReturned
             if ((demuxer.GetVideoCodec() == AV_CODEC_ID_H264) || (demuxer.GetVideoCodec() == AV_CODEC_ID_HEVC))
             {
-                ///////////////////////
-                uint64_t t0 = timestamp_ms();
-                ///////////////////////
-
                 nFrameReturned = dec.Decode(nVideoBytes > 0 ? pVideo + 6 : NULL,
                     // Cut head and tail generated by FFmpegDemuxer for H264/HEVC
                     nVideoBytes - (nVideoBytes > 20 && !memcmp(pVideo + nVideoBytes - 14, szTail, 14) ? 20 : 6),
                     CUVID_PKT_ENDOFPICTURE);
-
-                ///////////////////////
-                uint64_t t1 = timestamp_ms();
-                ///////////////////////
-                total_dec_time += (t1 - t0);
             }
             else
             {
                 nFrameReturned = dec.Decode(pVideo, nVideoBytes);
             }
 
+            // get information about the video stream (codec, display parameters etc)
             int iMatrix = dec.GetVideoFormatInfo().video_signal_description.matrix_coefficients;
             if (!nFrame && nFrameReturned) {
                 LOG(INFO) << "Color matrix coefficient: " << iMatrix;
             }
-            for (int i = 0; i < nFrameReturned; i++) {
-                pFrame = dec.GetFrame();
 
+            // Fetch all the frames that are available for display
+            for (int i = 0; i < nFrameReturned; i++) {
+                pFrame = dec.GetFrame();  // returns a decoded frame (and timestamp if the passed pointer is not NULL)
+
+                // Write the frame into the output file
                 if (eOutputFormat == native) {
                     fpOut.write(reinterpret_cast<char*>(pFrame), dec.GetFrameSize());
                 }
@@ -383,6 +383,7 @@ void DecodeProc(CUdevice cuDevice, const char *szMediaUri, OutputFormat eOutputF
 
         } while (nVideoBytes);
 
+        // Clean up
         if (eOutputFormat != native) 
         {
             ck(cuMemFree(dpRgbFrame));
@@ -394,8 +395,7 @@ void DecodeProc(CUdevice cuDevice, const char *szMediaUri, OutputFormat eOutputF
         std::cout << "Total frame decoded: " << nFrame << std::endl
             << "Saved in file " << szOutFilePath << " in "
             << (eOutputFormat == native ? (dec.GetBitDepth() == 8 ? "nv12" : "p010") : (eOutputFormat == bgra ? "bgra" : "bgra64"))
-            << " format" << std::endl
-            << "Total decode time: " << total_dec_time << std::endl;
+            << " format" << std::endl;
     }
     catch (const std::exception &)
     {
@@ -406,6 +406,7 @@ void DecodeProc(CUdevice cuDevice, const char *szMediaUri, OutputFormat eOutputF
 
 int main(int argc, char **argv)
 {
+    // initialize variables
     char szInFilePath[256] = "",
         szOutFilePath[256] = "";
     int nWidth = 0, nHeight = 0;
@@ -415,24 +416,31 @@ int main(int argc, char **argv)
     bool bBgra64 = false;
     std::exception_ptr encExceptionPtr;
     std::exception_ptr decExceptionPtr;
+
     try
     {
+        // Parse command line parameters
         NvEncoderInitParam encodeCLIOptions;
         ParseCommandLine(argc, argv, szInFilePath, nWidth, nHeight, eInputFormat, eOutputFormat, szOutFilePath, encodeCLIOptions, iGpu);
 
+        // Sanity checks
         CheckInputFile(szInFilePath);
         ValidateResolution(nWidth, nHeight);
 
+        // Check input format
         if (eInputFormat == NV_ENC_BUFFER_FORMAT_UNDEFINED) {
             bBgra64 = true;
             eInputFormat = NV_ENC_BUFFER_FORMAT_YUV420_10BIT;
         }
+
+        // Check output format
         if (!*szOutFilePath) {
             sprintf(szOutFilePath, "out.%s", eOutputFormat != native ?
                 vstrOutputFormatName[eOutputFormat].c_str() :
                 (eInputFormat != NV_ENC_BUFFER_FORMAT_YUV420_10BIT ? "nv12" : "p010"));
         }
 
+        // Check cuda device
         ck(cuInit(0));
         int nGpu = 0;
         ck(cuDeviceGetCount(&nGpu));
@@ -446,6 +454,7 @@ int main(int argc, char **argv)
         ck(cuDeviceGetName(szDeviceName, sizeof(szDeviceName), cuDevice));
         std::cout << "GPU in use: " << szDeviceName << std::endl;
 
+        // Launch threads
         const char *szMediaUri = "tcp://127.0.0.1:8899";
         char szMediaUriDecode[1024];
         sprintf(szMediaUriDecode, "%s?listen", szMediaUri);

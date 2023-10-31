@@ -86,6 +86,7 @@ private:
         }
 
         // Allocate the AVPackets and initialize to default values
+        // AVPacket is a structure stores compressed data typically exported by demuxers and then passed as input to decoders
         pkt = av_packet_alloc();
         pktFiltered = av_packet_alloc();
         if (!pkt || !pktFiltered) {

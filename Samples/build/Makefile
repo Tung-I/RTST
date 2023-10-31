@@ -162,30 +162,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named sender
+# Target rules for targets named AppEncDec
 
 # Build rule for target.
-sender: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 sender
-.PHONY : sender
+AppEncDec: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 AppEncDec
+.PHONY : AppEncDec
 
 # fast build rule for target.
-sender/fast:
-	$(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/sender.dir/build.make Ringmaster/CMakeFiles/sender.dir/build
-.PHONY : sender/fast
-
-#=============================================================================
-# Target rules for targets named receiver
-
-# Build rule for target.
-receiver: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 receiver
-.PHONY : receiver
-
-# fast build rule for target.
-receiver/fast:
-	$(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/receiver.dir/build.make Ringmaster/CMakeFiles/receiver.dir/build
-.PHONY : receiver/fast
+AppEncDec/fast:
+	$(MAKE) $(MAKESILENT) -f AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/build.make AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/build
+.PHONY : AppEncDec/fast
 
 # Help Target
 help:
@@ -199,8 +186,7 @@ help:
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
-	@echo "... receiver"
-	@echo "... sender"
+	@echo "... AppEncDec"
 .PHONY : help
 
 
