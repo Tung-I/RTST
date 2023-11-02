@@ -42,11 +42,14 @@ Encoder::Encoder(const uint16_t default_width,
   : default_width_(default_width), default_height_(default_height),
     frame_rate_(frame_rate), output_fd_()
     {
+  
   // open the output file
   if (not output_path.empty()) {
     output_fd_ = FileDescriptor(check_syscall(
         open(output_path.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644)));
   }
+
+  ValidateResolution(default_width, default_height);
 
   // initialize encoder parameters
   std::string CommandLineParam = 
@@ -54,10 +57,6 @@ Encoder::Encoder(const uint16_t default_width,
   pEncodeCLIOptions = NvEncoderInitParam(CommandLineParam.c_str(), NULL);
   eInputFormat = NV_ENC_BUFFER_FORMAT_IYUV;
   eOutputFormat = native;
-
-  iGpu = 0;
-  bgra64 = false;
-  ValidateResolution(default_width, default_height);
 
   // Check cuda device
   ck(cuInit(0));
@@ -84,6 +83,8 @@ Encoder::Encoder(const uint16_t default_width,
       pEncodeCLIOptions->GetPresetGUID(), pEncodeCLIOptions->GetTuningInfo());
   encodeConfig.gopLength = NVENC_INFINITE_GOPLENGTH;
   encodeConfig.frameIntervalP = 1;
+  encodeConfig.rcParams.disableIadapt = 1;
+  encodeConfig.rcParams.disableBadapt = 1;
 
   if (pEncodeCLIOptions->IsCodecH264())
   {
@@ -117,9 +118,7 @@ Encoder::Encoder(const uint16_t default_width,
 
 Encoder::~Encoder()
 {
-  if (vpx_codec_destroy(&context_) != VPX_CODEC_OK) {
-    cerr << "~Encoder(): failed to destroy VPX encoder context" << endl;
-  }
+  enc.DestroyEncoder();
 }
 
 void Encoder::compress_frame(const std::unique_ptr<uint8_t[]>& pHostFrame)
@@ -129,15 +128,8 @@ void Encoder::compress_frame(const std::unique_ptr<uint8_t[]>& pHostFrame)
 
   encode_frame(pHostFrame);
 
-  
-  
-  // for each packet
-            for (std::vector<uint8_t> &packet : vPacket) {
-                streamer.Stream(packet.data(), (int)packet.size(), nFrame++);
-            }
-
-  // packetize encoder_pkt into datagrams
-  const size_t frame_size = packetize_encoded_frame(default_width_, default_height_);
+  const size_t frame_size = packetize_encoded_frame(
+    default_width_, default_height_, vPacket);
 
   // output frame information
   if (output_fd_) {
@@ -157,7 +149,9 @@ void Encoder::compress_frame(const std::unique_ptr<uint8_t[]>& pHostFrame)
 
 void Encoder::encode_frame(const std::unique_ptr<uint8_t[]>& pHostFrame)
 {
-  
+  // default: normal frame
+  picParams.encodePicFlags = 0;
+
   // flush pacakge buffer before encoding a new frame
   if (not unacked_.empty()) {
     const auto & first_unacked = unacked_.cbegin()->second;
@@ -165,10 +159,11 @@ void Encoder::encode_frame(const std::unique_ptr<uint8_t[]>& pHostFrame)
 
     // give up if first unacked datagram was initially sent MAX_UNACKED_US ago
     if (us_since_first_send > MAX_UNACKED_US) {
-      encode_flags = VPX_EFLAG_FORCE_KF; // force next frame to be key frame
+
+      picParams.encodePicFlags = NV_ENC_PIC_FLAG_FORCEINTRA;  // force a key frame
+
       cerr << "* Recovery: gave up retransmissions and forced a key frame "
            << frame_id_ << endl;
-
       if (verbose_) {
         cerr << "Giving up on lost datagram: frame_id="
              << first_unacked.frame_id << " frag_id=" << first_unacked.frag_id
@@ -182,26 +177,26 @@ void Encoder::encode_frame(const std::unique_ptr<uint8_t[]>& pHostFrame)
     }
   }
 
-  // copy raw_img into the encoder input buffer
+  // copy host frame into the encoder input buffer
   encoderInputFrame = enc.GetNextInputFrame();  // pointer to the next input buffer
-  NvEncoderCuda::CopyToDeviceFrame(cuContext, pHostFrame.get(), 0, (CUdeviceptr)encoderInputFrame->inputPtr,
-                (int)encoderInputFrame->pitch,
-                enc.GetEncodeWidth(),
-                enc.GetEncodeHeight(),
-                CU_MEMORYTYPE_HOST,
-                encoderInputFrame->bufferFormat,
-                encoderInputFrame->chromaOffsets,
-                encoderInputFrame->numChromaPlanes);
+  NvEncoderCuda::CopyToDeviceFrame(
+      cuContext,
+      pHostFrame.get(),
+      0,
+      (CUdeviceptr)encoderInputFrame->inputPtr,
+      (int)encoderInputFrame->pitch,
+      enc.GetEncodeWidth(),
+      enc.GetEncodeHeight(),
+      CU_MEMORYTYPE_HOST,
+      encoderInputFrame->bufferFormat,
+      encoderInputFrame->chromaOffsets,
+      encoderInputFrame->numChromaPlanes
+  );
+
 
   // encode it into vPacket
-  enc.EncodeFrame(vPacket);
-
-
-  // encode a frame and calculate encoding time
   const auto encode_start = steady_clock::now();
-  check_call(vpx_codec_encode(&context_, raw_img.get_vpx_image(), frame_id_, 1,
-                              encode_flags, VPX_DL_REALTIME),
-             VPX_CODEC_OK, "failed to encode a frame");
+  enc.EncodeFrame(vPacket, &picParams);
   const auto encode_end = steady_clock::now();
   const double encode_time_ms = duration<double, milli>(
                                 encode_end - encode_start).count();
@@ -212,12 +207,17 @@ void Encoder::encode_frame(const std::unique_ptr<uint8_t[]>& pHostFrame)
   max_encode_time_ms_ = max(max_encode_time_ms_, encode_time_ms);
 }
 
-size_t Encoder::packetize_encoded_frame(uint16_t width, uint16_t height)
+size_t Encoder::packetize_encoded_frame(std::vector<std::vector<uint8_t>> &vPacket, uint16_t width, uint16_t height)
 {
-  const vpx_codec_cx_pkt_t * encoder_pkt;
-  vpx_codec_iter_t iter = nullptr;
   unsigned int frames_encoded = 0;
   size_t frame_size = 0;
+
+  for (std::vector<uint8_t> &packet : vPacket)
+  {
+    send_buf_.emplace_back(frame_id_, frame_type, frag_id, frag_cnt, width, height,
+      string_view {reinterpret_cast<const char*>(packet.data()), packet.size()});
+  }
+ 
   
   // get the compressed frame data
   while ((encoder_pkt = vpx_codec_get_cx_data(&context_, &iter))) {

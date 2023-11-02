@@ -73,23 +73,32 @@ private:
   uint16_t frame_rate_;
   std::optional<FileDescriptor> output_fd_;
 
+  /////////////////////////////////////////
   // nv codec
+
   NvEncoderInitParam pEncodeCLIOptions;
   NV_ENC_BUFFER_FORMAT eInputFormat;
   OutputFormat eOutputFormat;
-  int iGpu;
-  bool bBgra64;
+  int iGpu = 0;
+  bool bBgra64 = false;
   std::exception_ptr encExceptionPtr;
   std::exception_ptr decExceptionPtr;
+  // context
   CUcontext cuContext {NULL};
+  // init params
   NV_ENC_INITIALIZE_PARAMS initializeParams = { NV_ENC_INITIALIZE_PARAMS_VER }; 
+  // params for one frame
+  NV_ENC_PIC_PARAMS picParams = {NV_ENC_PIC_PARAMS_VER};
+  // config
   NV_ENC_CONFIG encodeConfig = { NV_ENC_CONFIG_VER };
-  
+  // cuda encoder interface
   NvEncoderCuda enc;  
-
-  const NvEncInputFrame* encoderInputFrame
+  // container
+  onst NvEncInputFrame* encoderInputFrame
   std::vector<std::vector<uint8_t>> vPacket; 
-  NV_ENC_PIC_PARAMS *pPicParams
+  
+
+  /////////////////////////////////////////
   
   
 
