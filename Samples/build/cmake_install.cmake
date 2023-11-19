@@ -45,6 +45,7 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/home/tungi/RTS-testbed/Samples/build/AppEncode/AppEncDec/cmake_install.cmake")
+  include("/home/tungi/RTS-testbed/Samples/build/Ringmaster/cmake_install.cmake")
 
 endif()
 

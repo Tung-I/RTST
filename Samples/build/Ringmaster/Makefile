@@ -189,6 +189,60 @@ receiver/fast:
 	cd /home/tungi/RTS-testbed/Samples/build && $(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/receiver.dir/build.make Ringmaster/CMakeFiles/receiver.dir/build
 .PHONY : receiver/fast
 
+TIHWDecoder.o: TIHWDecoder.cc.o
+.PHONY : TIHWDecoder.o
+
+# target to build an object file
+TIHWDecoder.cc.o:
+	cd /home/tungi/RTS-testbed/Samples/build && $(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/sender.dir/build.make Ringmaster/CMakeFiles/sender.dir/TIHWDecoder.cc.o
+	cd /home/tungi/RTS-testbed/Samples/build && $(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/receiver.dir/build.make Ringmaster/CMakeFiles/receiver.dir/TIHWDecoder.cc.o
+.PHONY : TIHWDecoder.cc.o
+
+TIHWDecoder.i: TIHWDecoder.cc.i
+.PHONY : TIHWDecoder.i
+
+# target to preprocess a source file
+TIHWDecoder.cc.i:
+	cd /home/tungi/RTS-testbed/Samples/build && $(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/sender.dir/build.make Ringmaster/CMakeFiles/sender.dir/TIHWDecoder.cc.i
+	cd /home/tungi/RTS-testbed/Samples/build && $(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/receiver.dir/build.make Ringmaster/CMakeFiles/receiver.dir/TIHWDecoder.cc.i
+.PHONY : TIHWDecoder.cc.i
+
+TIHWDecoder.s: TIHWDecoder.cc.s
+.PHONY : TIHWDecoder.s
+
+# target to generate assembly for a file
+TIHWDecoder.cc.s:
+	cd /home/tungi/RTS-testbed/Samples/build && $(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/sender.dir/build.make Ringmaster/CMakeFiles/sender.dir/TIHWDecoder.cc.s
+	cd /home/tungi/RTS-testbed/Samples/build && $(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/receiver.dir/build.make Ringmaster/CMakeFiles/receiver.dir/TIHWDecoder.cc.s
+.PHONY : TIHWDecoder.cc.s
+
+TIHWEncoder.o: TIHWEncoder.cc.o
+.PHONY : TIHWEncoder.o
+
+# target to build an object file
+TIHWEncoder.cc.o:
+	cd /home/tungi/RTS-testbed/Samples/build && $(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/sender.dir/build.make Ringmaster/CMakeFiles/sender.dir/TIHWEncoder.cc.o
+	cd /home/tungi/RTS-testbed/Samples/build && $(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/receiver.dir/build.make Ringmaster/CMakeFiles/receiver.dir/TIHWEncoder.cc.o
+.PHONY : TIHWEncoder.cc.o
+
+TIHWEncoder.i: TIHWEncoder.cc.i
+.PHONY : TIHWEncoder.i
+
+# target to preprocess a source file
+TIHWEncoder.cc.i:
+	cd /home/tungi/RTS-testbed/Samples/build && $(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/sender.dir/build.make Ringmaster/CMakeFiles/sender.dir/TIHWEncoder.cc.i
+	cd /home/tungi/RTS-testbed/Samples/build && $(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/receiver.dir/build.make Ringmaster/CMakeFiles/receiver.dir/TIHWEncoder.cc.i
+.PHONY : TIHWEncoder.cc.i
+
+TIHWEncoder.s: TIHWEncoder.cc.s
+.PHONY : TIHWEncoder.s
+
+# target to generate assembly for a file
+TIHWEncoder.cc.s:
+	cd /home/tungi/RTS-testbed/Samples/build && $(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/sender.dir/build.make Ringmaster/CMakeFiles/sender.dir/TIHWEncoder.cc.s
+	cd /home/tungi/RTS-testbed/Samples/build && $(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/receiver.dir/build.make Ringmaster/CMakeFiles/receiver.dir/TIHWEncoder.cc.s
+.PHONY : TIHWEncoder.cc.s
+
 Utils/address.o: Utils/address.cc.o
 .PHONY : Utils/address.o
 
@@ -702,33 +756,6 @@ __/NvCodec/NvEncoder/NvEncoderCuda.cpp.s:
 	cd /home/tungi/RTS-testbed/Samples/build && $(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/receiver.dir/build.make Ringmaster/CMakeFiles/receiver.dir/__/NvCodec/NvEncoder/NvEncoderCuda.cpp.s
 .PHONY : __/NvCodec/NvEncoder/NvEncoderCuda.cpp.s
 
-nv_encoder.o: nv_encoder.cc.o
-.PHONY : nv_encoder.o
-
-# target to build an object file
-nv_encoder.cc.o:
-	cd /home/tungi/RTS-testbed/Samples/build && $(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/sender.dir/build.make Ringmaster/CMakeFiles/sender.dir/nv_encoder.cc.o
-	cd /home/tungi/RTS-testbed/Samples/build && $(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/receiver.dir/build.make Ringmaster/CMakeFiles/receiver.dir/nv_encoder.cc.o
-.PHONY : nv_encoder.cc.o
-
-nv_encoder.i: nv_encoder.cc.i
-.PHONY : nv_encoder.i
-
-# target to preprocess a source file
-nv_encoder.cc.i:
-	cd /home/tungi/RTS-testbed/Samples/build && $(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/sender.dir/build.make Ringmaster/CMakeFiles/sender.dir/nv_encoder.cc.i
-	cd /home/tungi/RTS-testbed/Samples/build && $(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/receiver.dir/build.make Ringmaster/CMakeFiles/receiver.dir/nv_encoder.cc.i
-.PHONY : nv_encoder.cc.i
-
-nv_encoder.s: nv_encoder.cc.s
-.PHONY : nv_encoder.s
-
-# target to generate assembly for a file
-nv_encoder.cc.s:
-	cd /home/tungi/RTS-testbed/Samples/build && $(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/sender.dir/build.make Ringmaster/CMakeFiles/sender.dir/nv_encoder.cc.s
-	cd /home/tungi/RTS-testbed/Samples/build && $(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/receiver.dir/build.make Ringmaster/CMakeFiles/receiver.dir/nv_encoder.cc.s
-.PHONY : nv_encoder.cc.s
-
 protocol.o: protocol.cc.o
 .PHONY : protocol.o
 
@@ -804,33 +831,6 @@ sender.cpp.s:
 	cd /home/tungi/RTS-testbed/Samples/build && $(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/sender.dir/build.make Ringmaster/CMakeFiles/sender.dir/sender.cpp.s
 .PHONY : sender.cpp.s
 
-vp9_decoder.o: vp9_decoder.cc.o
-.PHONY : vp9_decoder.o
-
-# target to build an object file
-vp9_decoder.cc.o:
-	cd /home/tungi/RTS-testbed/Samples/build && $(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/sender.dir/build.make Ringmaster/CMakeFiles/sender.dir/vp9_decoder.cc.o
-	cd /home/tungi/RTS-testbed/Samples/build && $(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/receiver.dir/build.make Ringmaster/CMakeFiles/receiver.dir/vp9_decoder.cc.o
-.PHONY : vp9_decoder.cc.o
-
-vp9_decoder.i: vp9_decoder.cc.i
-.PHONY : vp9_decoder.i
-
-# target to preprocess a source file
-vp9_decoder.cc.i:
-	cd /home/tungi/RTS-testbed/Samples/build && $(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/sender.dir/build.make Ringmaster/CMakeFiles/sender.dir/vp9_decoder.cc.i
-	cd /home/tungi/RTS-testbed/Samples/build && $(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/receiver.dir/build.make Ringmaster/CMakeFiles/receiver.dir/vp9_decoder.cc.i
-.PHONY : vp9_decoder.cc.i
-
-vp9_decoder.s: vp9_decoder.cc.s
-.PHONY : vp9_decoder.s
-
-# target to generate assembly for a file
-vp9_decoder.cc.s:
-	cd /home/tungi/RTS-testbed/Samples/build && $(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/sender.dir/build.make Ringmaster/CMakeFiles/sender.dir/vp9_decoder.cc.s
-	cd /home/tungi/RTS-testbed/Samples/build && $(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/receiver.dir/build.make Ringmaster/CMakeFiles/receiver.dir/vp9_decoder.cc.s
-.PHONY : vp9_decoder.cc.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -845,6 +845,12 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... receiver"
 	@echo "... sender"
+	@echo "... TIHWDecoder.o"
+	@echo "... TIHWDecoder.i"
+	@echo "... TIHWDecoder.s"
+	@echo "... TIHWEncoder.o"
+	@echo "... TIHWEncoder.i"
+	@echo "... TIHWEncoder.s"
 	@echo "... Utils/address.o"
 	@echo "... Utils/address.i"
 	@echo "... Utils/address.s"
@@ -902,9 +908,6 @@ help:
 	@echo "... __/NvCodec/NvEncoder/NvEncoderCuda.o"
 	@echo "... __/NvCodec/NvEncoder/NvEncoderCuda.i"
 	@echo "... __/NvCodec/NvEncoder/NvEncoderCuda.s"
-	@echo "... nv_encoder.o"
-	@echo "... nv_encoder.i"
-	@echo "... nv_encoder.s"
 	@echo "... protocol.o"
 	@echo "... protocol.i"
 	@echo "... protocol.s"
@@ -914,9 +917,6 @@ help:
 	@echo "... sender.o"
 	@echo "... sender.i"
 	@echo "... sender.s"
-	@echo "... vp9_decoder.o"
-	@echo "... vp9_decoder.i"
-	@echo "... vp9_decoder.s"
 .PHONY : help
 
 

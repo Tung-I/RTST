@@ -77,7 +77,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     set(SWRESAMPLE_LIB ${SWRESAMPLE_LIBRARY})
 endif()
 
-# add_subdirectory(AppEncode/AppEncDec)
+add_subdirectory(AppEncode/AppEncDec)
 add_subdirectory(Ringmaster)
 
 

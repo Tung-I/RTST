@@ -258,6 +258,11 @@ void EncodeProc(CUdevice cuDevice, int nWidth, int nHeight, NV_ENC_BUFFER_FORMAT
                 enc.EndEncode(vPacket);
             }
 
+            // check whether vPacket has exactly one element
+            std::cout << "vPacket size: " << vPacket.size() << std::endl;
+            assert(vPacket.size() == 1);
+
+
             // for each packet
             for (std::vector<uint8_t> &packet : vPacket) {
                 streamer.Stream(packet.data(), (int)packet.size(), nFrame++);

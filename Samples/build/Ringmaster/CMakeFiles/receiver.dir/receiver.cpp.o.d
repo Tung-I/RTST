@@ -352,13 +352,10 @@ Ringmaster/CMakeFiles/receiver.dir/receiver.cpp.o: \
  /home/tungi/RTS-testbed/Samples/Ringmaster/Video/image.hh \
  /usr/include/vpx/vpx_image.h \
  /home/tungi/RTS-testbed/Samples/Ringmaster/protocol.hh \
- /home/tungi/RTS-testbed/Samples/Ringmaster/vp9_decoder.hh \
- /usr/include/vpx/vpx_decoder.h /usr/include/vpx/vpx_codec.h \
- /usr/include/vpx/vpx_image.h /usr/include/vpx/vpx_integer.h \
- /usr/include/vpx/vpx_frame_buffer.h /usr/include/vpx/vp8dx.h \
- /usr/include/vpx/vp8.h /usr/include/c++/9/map \
- /usr/include/c++/9/bits/stl_tree.h /usr/include/c++/9/bits/node_handle.h \
- /usr/include/c++/9/bits/stl_map.h /usr/include/c++/9/bits/stl_multimap.h \
+ /home/tungi/RTS-testbed/Samples/Ringmaster/TIHWDecoder.hh \
+ /usr/include/c++/9/map /usr/include/c++/9/bits/stl_tree.h \
+ /usr/include/c++/9/bits/node_handle.h /usr/include/c++/9/bits/stl_map.h \
+ /usr/include/c++/9/bits/stl_multimap.h \
  /usr/include/c++/9/bits/erase_if.h /usr/include/c++/9/deque \
  /usr/include/c++/9/bits/stl_deque.h /usr/include/c++/9/bits/deque.tcc \
  /usr/include/c++/9/mutex /usr/include/c++/9/bits/std_mutex.h \
@@ -366,11 +363,112 @@ Ringmaster/CMakeFiles/receiver.dir/receiver.cpp.o: \
  /usr/include/c++/9/condition_variable /usr/include/c++/9/thread \
  /home/tungi/RTS-testbed/Samples/Ringmaster/Video/sdl.hh \
  /home/tungi/RTS-testbed/Samples/Ringmaster/Utils/file_descriptor.hh \
- /home/tungi/RTS-testbed/Samples/Utils/NvCodecUtils.h \
- /usr/include/assert.h /home/tungi/RTS-testbed/Samples/Utils/Logger.h \
+ /home/tungi/RTS-testbed/Samples/NvCodec/NvDecoder/NvDecoder.h \
+ /usr/include/assert.h \
+ /home/tungi/RTS-testbed/Samples/NvCodec/NvDecoder/../../../Interface/nvcuvid.h \
+ /home/tungi/RTS-testbed/Samples/NvCodec/NvDecoder/../../../Interface/cuviddec.h \
+ /usr/local/cuda/include/cuda.h \
+ /home/tungi/RTS-testbed/Samples/Utils/../Utils/NvCodecUtils.h \
+ /home/tungi/RTS-testbed/Samples/Utils/../Utils/Logger.h \
  /usr/include/c++/9/fstream \
  /usr/include/x86_64-linux-gnu/c++/9/bits/basic_file.h \
  /usr/include/x86_64-linux-gnu/c++/9/bits/c++io.h \
  /usr/include/c++/9/bits/fstream.tcc /usr/include/arpa/inet.h \
  /usr/include/c++/9/list /usr/include/c++/9/bits/stl_list.h \
- /usr/include/c++/9/bits/list.tcc
+ /usr/include/c++/9/bits/list.tcc \
+ /home/tungi/RTS-testbed/Samples/NvCodec/NvEncoder/NvEncoderCuda.h \
+ /home/tungi/RTS-testbed/Samples/NvCodec/NvEncoder/NvEncoder.h \
+ /home/tungi/RTS-testbed/Samples/../Interface/nvEncodeAPI.h \
+ /home/tungi/RTS-testbed/Samples/Utils/NvEncoderCLIOptions.h \
+ /usr/include/c++/9/algorithm /usr/include/c++/9/bits/stl_algo.h \
+ /usr/include/c++/9/bits/algorithmfwd.h \
+ /usr/include/c++/9/bits/stl_heap.h \
+ /usr/include/c++/9/bits/uniform_int_dist.h \
+ /usr/include/c++/9/pstl/glue_algorithm_defs.h \
+ /usr/include/c++/9/functional /usr/include/c++/9/bits/std_function.h \
+ /usr/include/c++/9/unordered_map /usr/include/c++/9/bits/hashtable.h \
+ /usr/include/c++/9/bits/hashtable_policy.h \
+ /usr/include/c++/9/bits/unordered_map.h /usr/include/c++/9/iterator \
+ /usr/include/c++/9/bits/stream_iterator.h /usr/include/c++/9/cstring \
+ /home/tungi/RTS-testbed/Samples/Utils/FFmpegStreamer.h \
+ /usr/local/include/libavformat/avformat.h \
+ /usr/local/include/libavcodec/codec_par.h \
+ /usr/local/include/libavutil/avutil.h \
+ /usr/local/include/libavutil/common.h \
+ /usr/lib/gcc/x86_64-linux-gnu/9/include/limits.h \
+ /usr/lib/gcc/x86_64-linux-gnu/9/include/syslimits.h \
+ /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
+ /usr/include/x86_64-linux-gnu/bits/local_lim.h \
+ /usr/include/linux/limits.h \
+ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
+ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
+ /usr/include/x86_64-linux-gnu/bits/uio_lim.h \
+ /usr/local/include/libavutil/attributes.h \
+ /usr/local/include/libavutil/error.h \
+ /usr/local/include/libavutil/macros.h \
+ /usr/local/include/libavutil/avconfig.h \
+ /usr/local/include/libavutil/mem.h \
+ /usr/local/include/libavutil/rational.h \
+ /usr/local/include/libavutil/version.h \
+ /usr/local/include/libavutil/mathematics.h \
+ /usr/local/include/libavutil/intfloat.h \
+ /usr/local/include/libavutil/log.h /usr/local/include/libavutil/pixfmt.h \
+ /usr/local/include/libavutil/channel_layout.h \
+ /usr/local/include/libavutil/rational.h \
+ /usr/local/include/libavutil/pixfmt.h \
+ /usr/local/include/libavcodec/codec_id.h \
+ /usr/local/include/libavutil/samplefmt.h \
+ /usr/local/include/libavcodec/version_major.h \
+ /usr/local/include/libavcodec/defs.h \
+ /usr/local/include/libavcodec/defs.h \
+ /usr/local/include/libavcodec/packet.h \
+ /usr/local/include/libavutil/attributes.h \
+ /usr/local/include/libavutil/buffer.h \
+ /usr/local/include/libavutil/dict.h \
+ /usr/local/include/libavutil/version.h \
+ /usr/local/include/libavcodec/version_major.h \
+ /usr/local/include/libavutil/log.h /usr/local/include/libavformat/avio.h \
+ /usr/local/include/libavformat/version_major.h \
+ /usr/local/include/libavformat/version.h \
+ /usr/local/include/libavformat/version_major.h \
+ /usr/local/include/libavutil/frame.h \
+ /usr/local/include/libavutil/avutil.h \
+ /usr/local/include/libavutil/buffer.h \
+ /usr/local/include/libavutil/channel_layout.h \
+ /usr/local/include/libavutil/dict.h \
+ /usr/local/include/libavutil/samplefmt.h \
+ /usr/local/include/libavcodec/codec.h \
+ /usr/local/include/libavutil/hwcontext.h \
+ /usr/local/include/libavutil/frame.h \
+ /usr/local/include/libavcodec/codec_id.h \
+ /usr/local/include/libavutil/opt.h \
+ /usr/local/include/libswresample/swresample.h \
+ /usr/local/include/libswresample/version_major.h \
+ /usr/local/include/libswresample/version.h \
+ /usr/local/include/libswresample/version_major.h \
+ /home/tungi/RTS-testbed/Samples/Utils/FFmpegDemuxer.h \
+ /usr/local/include/libavformat/avio.h \
+ /usr/local/include/libavcodec/avcodec.h \
+ /usr/local/include/libavcodec/codec.h \
+ /usr/local/include/libavcodec/packet.h \
+ /usr/local/include/libavcodec/version.h \
+ /usr/local/include/libavcodec/codec_desc.h \
+ /usr/local/include/libavcodec/codec_par.h \
+ /usr/local/include/libavcodec/bsf.h \
+ /home/tungi/RTS-testbed/Samples/Utils/ColorSpace.h \
+ /usr/local/cuda/include/cuda_runtime.h \
+ /usr/local/cuda/include/crt/host_config.h \
+ /usr/local/cuda/include/builtin_types.h \
+ /usr/local/cuda/include/device_types.h \
+ /usr/local/cuda/include/crt/host_defines.h \
+ /usr/local/cuda/include/driver_types.h \
+ /usr/local/cuda/include/vector_types.h \
+ /usr/local/cuda/include/surface_types.h \
+ /usr/local/cuda/include/texture_types.h \
+ /usr/local/cuda/include/library_types.h \
+ /usr/local/cuda/include/channel_descriptor.h \
+ /usr/local/cuda/include/cuda_runtime_api.h \
+ /usr/local/cuda/include/cuda_device_runtime_api.h \
+ /usr/local/cuda/include/driver_functions.h \
+ /usr/local/cuda/include/vector_functions.h \
+ /usr/local/cuda/include/vector_functions.hpp

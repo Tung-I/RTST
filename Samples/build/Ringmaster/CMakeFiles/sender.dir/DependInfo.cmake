@@ -8,6 +8,8 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "/home/tungi/RTS-testbed/Samples/Ringmaster/TIHWDecoder.cc" "Ringmaster/CMakeFiles/sender.dir/TIHWDecoder.cc.o" "gcc" "Ringmaster/CMakeFiles/sender.dir/TIHWDecoder.cc.o.d"
+  "/home/tungi/RTS-testbed/Samples/Ringmaster/TIHWEncoder.cc" "Ringmaster/CMakeFiles/sender.dir/TIHWEncoder.cc.o" "gcc" "Ringmaster/CMakeFiles/sender.dir/TIHWEncoder.cc.o.d"
   "/home/tungi/RTS-testbed/Samples/Ringmaster/Utils/address.cc" "Ringmaster/CMakeFiles/sender.dir/Utils/address.cc.o" "gcc" "Ringmaster/CMakeFiles/sender.dir/Utils/address.cc.o.d"
   "/home/tungi/RTS-testbed/Samples/Ringmaster/Utils/conversion.cc" "Ringmaster/CMakeFiles/sender.dir/Utils/conversion.cc.o" "gcc" "Ringmaster/CMakeFiles/sender.dir/Utils/conversion.cc.o.d"
   "/home/tungi/RTS-testbed/Samples/Ringmaster/Utils/epoller.cc" "Ringmaster/CMakeFiles/sender.dir/Utils/epoller.cc.o" "gcc" "Ringmaster/CMakeFiles/sender.dir/Utils/epoller.cc.o.d"
@@ -27,10 +29,8 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/tungi/RTS-testbed/Samples/NvCodec/NvDecoder/NvDecoder.cpp" "Ringmaster/CMakeFiles/sender.dir/__/NvCodec/NvDecoder/NvDecoder.cpp.o" "gcc" "Ringmaster/CMakeFiles/sender.dir/__/NvCodec/NvDecoder/NvDecoder.cpp.o.d"
   "/home/tungi/RTS-testbed/Samples/NvCodec/NvEncoder/NvEncoder.cpp" "Ringmaster/CMakeFiles/sender.dir/__/NvCodec/NvEncoder/NvEncoder.cpp.o" "gcc" "Ringmaster/CMakeFiles/sender.dir/__/NvCodec/NvEncoder/NvEncoder.cpp.o.d"
   "/home/tungi/RTS-testbed/Samples/NvCodec/NvEncoder/NvEncoderCuda.cpp" "Ringmaster/CMakeFiles/sender.dir/__/NvCodec/NvEncoder/NvEncoderCuda.cpp.o" "gcc" "Ringmaster/CMakeFiles/sender.dir/__/NvCodec/NvEncoder/NvEncoderCuda.cpp.o.d"
-  "/home/tungi/RTS-testbed/Samples/Ringmaster/nv_encoder.cc" "Ringmaster/CMakeFiles/sender.dir/nv_encoder.cc.o" "gcc" "Ringmaster/CMakeFiles/sender.dir/nv_encoder.cc.o.d"
   "/home/tungi/RTS-testbed/Samples/Ringmaster/protocol.cc" "Ringmaster/CMakeFiles/sender.dir/protocol.cc.o" "gcc" "Ringmaster/CMakeFiles/sender.dir/protocol.cc.o.d"
   "/home/tungi/RTS-testbed/Samples/Ringmaster/sender.cpp" "Ringmaster/CMakeFiles/sender.dir/sender.cpp.o" "gcc" "Ringmaster/CMakeFiles/sender.dir/sender.cpp.o.d"
-  "/home/tungi/RTS-testbed/Samples/Ringmaster/vp9_decoder.cc" "Ringmaster/CMakeFiles/sender.dir/vp9_decoder.cc.o" "gcc" "Ringmaster/CMakeFiles/sender.dir/vp9_decoder.cc.o.d"
   )
 
 # Targets to which this target links.

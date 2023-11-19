@@ -249,6 +249,8 @@ public:
     virtual void SetInitParams(NV_ENC_INITIALIZE_PARAMS *pParams, NV_ENC_BUFFER_FORMAT eBufferFormat)
     {
         NV_ENC_CONFIG &config = *pParams->encodeConfig;
+        
+        
         int nGOPOption = 0, nBFramesOption = 0;
         for (unsigned i = 0; i < tokens.size(); i++)
         {

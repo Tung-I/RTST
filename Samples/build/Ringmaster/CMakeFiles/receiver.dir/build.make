@@ -443,33 +443,33 @@ Ringmaster/CMakeFiles/receiver.dir/receiver.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/receiver.dir/receiver.cpp.s"
 	cd /home/tungi/RTS-testbed/Samples/build/Ringmaster && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tungi/RTS-testbed/Samples/Ringmaster/receiver.cpp -o CMakeFiles/receiver.dir/receiver.cpp.s
 
-Ringmaster/CMakeFiles/receiver.dir/vp9_decoder.cc.o: Ringmaster/CMakeFiles/receiver.dir/flags.make
-Ringmaster/CMakeFiles/receiver.dir/vp9_decoder.cc.o: ../Ringmaster/vp9_decoder.cc
-Ringmaster/CMakeFiles/receiver.dir/vp9_decoder.cc.o: Ringmaster/CMakeFiles/receiver.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/tungi/RTS-testbed/Samples/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object Ringmaster/CMakeFiles/receiver.dir/vp9_decoder.cc.o"
-	cd /home/tungi/RTS-testbed/Samples/build/Ringmaster && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Ringmaster/CMakeFiles/receiver.dir/vp9_decoder.cc.o -MF CMakeFiles/receiver.dir/vp9_decoder.cc.o.d -o CMakeFiles/receiver.dir/vp9_decoder.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/vp9_decoder.cc
+Ringmaster/CMakeFiles/receiver.dir/TIHWEncoder.cc.o: Ringmaster/CMakeFiles/receiver.dir/flags.make
+Ringmaster/CMakeFiles/receiver.dir/TIHWEncoder.cc.o: ../Ringmaster/TIHWEncoder.cc
+Ringmaster/CMakeFiles/receiver.dir/TIHWEncoder.cc.o: Ringmaster/CMakeFiles/receiver.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/tungi/RTS-testbed/Samples/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object Ringmaster/CMakeFiles/receiver.dir/TIHWEncoder.cc.o"
+	cd /home/tungi/RTS-testbed/Samples/build/Ringmaster && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Ringmaster/CMakeFiles/receiver.dir/TIHWEncoder.cc.o -MF CMakeFiles/receiver.dir/TIHWEncoder.cc.o.d -o CMakeFiles/receiver.dir/TIHWEncoder.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/TIHWEncoder.cc
 
-Ringmaster/CMakeFiles/receiver.dir/vp9_decoder.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/receiver.dir/vp9_decoder.cc.i"
-	cd /home/tungi/RTS-testbed/Samples/build/Ringmaster && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tungi/RTS-testbed/Samples/Ringmaster/vp9_decoder.cc > CMakeFiles/receiver.dir/vp9_decoder.cc.i
+Ringmaster/CMakeFiles/receiver.dir/TIHWEncoder.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/receiver.dir/TIHWEncoder.cc.i"
+	cd /home/tungi/RTS-testbed/Samples/build/Ringmaster && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tungi/RTS-testbed/Samples/Ringmaster/TIHWEncoder.cc > CMakeFiles/receiver.dir/TIHWEncoder.cc.i
 
-Ringmaster/CMakeFiles/receiver.dir/vp9_decoder.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/receiver.dir/vp9_decoder.cc.s"
-	cd /home/tungi/RTS-testbed/Samples/build/Ringmaster && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tungi/RTS-testbed/Samples/Ringmaster/vp9_decoder.cc -o CMakeFiles/receiver.dir/vp9_decoder.cc.s
+Ringmaster/CMakeFiles/receiver.dir/TIHWEncoder.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/receiver.dir/TIHWEncoder.cc.s"
+	cd /home/tungi/RTS-testbed/Samples/build/Ringmaster && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tungi/RTS-testbed/Samples/Ringmaster/TIHWEncoder.cc -o CMakeFiles/receiver.dir/TIHWEncoder.cc.s
 
-Ringmaster/CMakeFiles/receiver.dir/nv_encoder.cc.o: Ringmaster/CMakeFiles/receiver.dir/flags.make
-Ringmaster/CMakeFiles/receiver.dir/nv_encoder.cc.o: ../Ringmaster/nv_encoder.cc
-Ringmaster/CMakeFiles/receiver.dir/nv_encoder.cc.o: Ringmaster/CMakeFiles/receiver.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/tungi/RTS-testbed/Samples/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object Ringmaster/CMakeFiles/receiver.dir/nv_encoder.cc.o"
-	cd /home/tungi/RTS-testbed/Samples/build/Ringmaster && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Ringmaster/CMakeFiles/receiver.dir/nv_encoder.cc.o -MF CMakeFiles/receiver.dir/nv_encoder.cc.o.d -o CMakeFiles/receiver.dir/nv_encoder.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/nv_encoder.cc
+Ringmaster/CMakeFiles/receiver.dir/TIHWDecoder.cc.o: Ringmaster/CMakeFiles/receiver.dir/flags.make
+Ringmaster/CMakeFiles/receiver.dir/TIHWDecoder.cc.o: ../Ringmaster/TIHWDecoder.cc
+Ringmaster/CMakeFiles/receiver.dir/TIHWDecoder.cc.o: Ringmaster/CMakeFiles/receiver.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/tungi/RTS-testbed/Samples/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object Ringmaster/CMakeFiles/receiver.dir/TIHWDecoder.cc.o"
+	cd /home/tungi/RTS-testbed/Samples/build/Ringmaster && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Ringmaster/CMakeFiles/receiver.dir/TIHWDecoder.cc.o -MF CMakeFiles/receiver.dir/TIHWDecoder.cc.o.d -o CMakeFiles/receiver.dir/TIHWDecoder.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/TIHWDecoder.cc
 
-Ringmaster/CMakeFiles/receiver.dir/nv_encoder.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/receiver.dir/nv_encoder.cc.i"
-	cd /home/tungi/RTS-testbed/Samples/build/Ringmaster && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tungi/RTS-testbed/Samples/Ringmaster/nv_encoder.cc > CMakeFiles/receiver.dir/nv_encoder.cc.i
+Ringmaster/CMakeFiles/receiver.dir/TIHWDecoder.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/receiver.dir/TIHWDecoder.cc.i"
+	cd /home/tungi/RTS-testbed/Samples/build/Ringmaster && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tungi/RTS-testbed/Samples/Ringmaster/TIHWDecoder.cc > CMakeFiles/receiver.dir/TIHWDecoder.cc.i
 
-Ringmaster/CMakeFiles/receiver.dir/nv_encoder.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/receiver.dir/nv_encoder.cc.s"
-	cd /home/tungi/RTS-testbed/Samples/build/Ringmaster && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tungi/RTS-testbed/Samples/Ringmaster/nv_encoder.cc -o CMakeFiles/receiver.dir/nv_encoder.cc.s
+Ringmaster/CMakeFiles/receiver.dir/TIHWDecoder.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/receiver.dir/TIHWDecoder.cc.s"
+	cd /home/tungi/RTS-testbed/Samples/build/Ringmaster && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tungi/RTS-testbed/Samples/Ringmaster/TIHWDecoder.cc -o CMakeFiles/receiver.dir/TIHWDecoder.cc.s
 
 Ringmaster/CMakeFiles/receiver.dir/protocol.cc.o: Ringmaster/CMakeFiles/receiver.dir/flags.make
 Ringmaster/CMakeFiles/receiver.dir/protocol.cc.o: ../Ringmaster/protocol.cc
@@ -754,8 +754,8 @@ Ringmaster/CMakeFiles/receiver.dir/__/NvCodec/NvDecoder/NvDecoder.cpp.s: cmake_f
 # Object files for target receiver
 receiver_OBJECTS = \
 "CMakeFiles/receiver.dir/receiver.cpp.o" \
-"CMakeFiles/receiver.dir/vp9_decoder.cc.o" \
-"CMakeFiles/receiver.dir/nv_encoder.cc.o" \
+"CMakeFiles/receiver.dir/TIHWEncoder.cc.o" \
+"CMakeFiles/receiver.dir/TIHWDecoder.cc.o" \
 "CMakeFiles/receiver.dir/protocol.cc.o" \
 "CMakeFiles/receiver.dir/Utils/address.cc.o" \
 "CMakeFiles/receiver.dir/Utils/conversion.cc.o" \
@@ -782,8 +782,8 @@ receiver_EXTERNAL_OBJECTS = \
 "/home/tungi/RTS-testbed/Samples/build/Ringmaster/CMakeFiles/receiver.dir/__/Utils/receiver_generated_ColorSpace.cu.o"
 
 Ringmaster/receiver: Ringmaster/CMakeFiles/receiver.dir/receiver.cpp.o
-Ringmaster/receiver: Ringmaster/CMakeFiles/receiver.dir/vp9_decoder.cc.o
-Ringmaster/receiver: Ringmaster/CMakeFiles/receiver.dir/nv_encoder.cc.o
+Ringmaster/receiver: Ringmaster/CMakeFiles/receiver.dir/TIHWEncoder.cc.o
+Ringmaster/receiver: Ringmaster/CMakeFiles/receiver.dir/TIHWDecoder.cc.o
 Ringmaster/receiver: Ringmaster/CMakeFiles/receiver.dir/protocol.cc.o
 Ringmaster/receiver: Ringmaster/CMakeFiles/receiver.dir/Utils/address.cc.o
 Ringmaster/receiver: Ringmaster/CMakeFiles/receiver.dir/Utils/conversion.cc.o

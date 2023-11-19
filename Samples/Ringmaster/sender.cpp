@@ -13,7 +13,7 @@
 #include "Utils/poller.hh"
 #include "Video/yuv4mpeg.hh"
 #include "protocol.hh"
-#include "nv_encoder.hh"
+#include "TIHWEncoder.hh"
 #include "Utils/timestamp.hh"
 
 #include "NvCodecUtils.h"
@@ -99,13 +99,13 @@ int main(int argc, char * argv[])
         break;
       default:
         print_usage(argv[0]);
-        return std::EXIT_FAILURE;
+        return EXIT_FAILURE;
     }
   }
 
   if (optind != argc - 2) {
     print_usage(argv[0]);
-    return std::EXIT_FAILURE;
+    return EXIT_FAILURE;
   }
 
   const auto video_port = narrow_cast<uint16_t>(strict_stoi(argv[optind]));
@@ -148,23 +148,27 @@ int main(int argc, char * argv[])
   if (!fpIn)
   {
       std::cout << "Unable to open input file: " << szInFilePath << std::endl;
-      return;
+      return EXIT_FAILURE;
   }
 
-  // allocate a frame container
-  int nHostFrameSize;
-  std::unique_ptr<uint8_t[]> pHostFrame;
 
   // initialize the encoder
-  Encoder encoder(init_width, init_height, init_frame_rate, output_path);
+  TIHWEncoder encoder(init_width, init_height, init_frame_rate, output_path);
   encoder.set_target_bitrate(init_target_bitrate);
   encoder.set_verbose(verbose);
+
+  // allocate a host frame container
+  int nHostFrameSize = encoder.penc->GetFrameSize(); 
+  std::unique_ptr<uint8_t[]> pHostFrame(new uint8_t[nHostFrameSize]); 
 
   // create a periodic timer
   Poller poller;
   Timerfd fps_timer;
   const timespec frame_interval {0, static_cast<long>(BILLION / init_frame_rate)}; // {sec, nsec}
   fps_timer.set_time(frame_interval, frame_interval); // {initial expiration, interval}
+
+  // streamsize
+  std::streamsize nRead = 0;
 
   // when the periodic timer fires
   poller.register_event(fps_timer, Poller::In,
@@ -178,7 +182,7 @@ int main(int argc, char * argv[])
 
       for (unsigned int i = 0; i < num_exp; i++) {
         nRead = fpIn.read(reinterpret_cast<char*>(pHostFrame.get()), nHostFrameSize).gcount(); 
-        if !(nRead == nHostFrameSize) // if end of file
+        if (nRead != nHostFrameSize) // if end of file
         {
           std::cout << "Reach the end of the video file." << std::endl;
           exit(0);
@@ -291,7 +295,7 @@ int main(int argc, char * argv[])
       while (true) {
         const auto & raw_data = signal_sock.recv();
         if (not raw_data) { // EWOULDBLOCK; try again when data is available
-        std:: << "Unknown message type received on RTCP port." << std::endl;
+        std::cerr << "Unknown message type received on RTCP port." << std::endl;
           break;
         }
         const std::shared_ptr<Msg> sig_msg = Msg::parse_from_string(*raw_data);

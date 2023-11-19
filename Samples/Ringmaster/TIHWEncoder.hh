@@ -1,5 +1,5 @@
-#ifndef NVIDIA_ENCODER_HH
-#define NVIDIA_ENCODER_HH
+#ifndef TIHW_ENCODER_HH
+#define TIHW_ENCODER_HH
 
 #include <deque>
 #include <map>
@@ -29,15 +29,22 @@
 #include "protocol.hh"
 #include "file_descriptor.hh" 
 
-class Encoder
+
+enum OutputFormat
+{
+    native = 0, bgra, bgra64
+};
+
+
+class TIHWEncoder
 {
 public:
   // initialize a VP9 encoder
-  Encoder(const uint16_t default_width,
-          const uint16_t default_height,
+  TIHWEncoder(const uint16_t nWidth,
+          const uint16_t nHeight,
           const uint16_t frame_rate,
           const std::string & output_path = "");
-  ~Encoder();
+  ~TIHWEncoder();
 
   // encode raw_img and packetize into datagrams
   void compress_frame(const std::unique_ptr<uint8_t[]>& pHostFrame);
@@ -62,23 +69,26 @@ public:
   void set_target_bitrate(const unsigned int bitrate_kbps);
 
   // forbid copying and moving
-  Encoder(const Encoder & other) = delete;
-  const Encoder & operator=(const Encoder & other) = delete;
-  Encoder(Encoder && other) = delete;
-  Encoder & operator=(Encoder && other) = delete;
+  TIHWEncoder(const TIHWEncoder & other) = delete;
+  const TIHWEncoder & operator=(const TIHWEncoder & other) = delete;
+  TIHWEncoder(TIHWEncoder && other) = delete;
+  TIHWEncoder & operator=(TIHWEncoder && other) = delete;
+
+  // cuda encoder interface
+  NvEncoderCuda *penc = NULL;
 
 private:
-  uint16_t default_width_;
-  uint16_t default_height_;
+  uint16_t nWidth_;
+  uint16_t nHeight_;
   uint16_t frame_rate_;
   std::optional<FileDescriptor> output_fd_;
 
   /////////////////////////////////////////
   // nv codec
 
-  NvEncoderInitParam pEncodeCLIOptions;
-  NV_ENC_BUFFER_FORMAT eInputFormat;
-  OutputFormat eOutputFormat;
+  NvEncoderInitParam EncodeCLIOptions;
+  NV_ENC_BUFFER_FORMAT eInputFormat = NV_ENC_BUFFER_FORMAT_IYUV;
+  OutputFormat eOutputFormat = native;
   int iGpu = 0;
   bool bBgra64 = false;
   std::exception_ptr encExceptionPtr;
@@ -87,19 +97,21 @@ private:
   CUcontext cuContext {NULL};
   // init params
   NV_ENC_INITIALIZE_PARAMS initializeParams = { NV_ENC_INITIALIZE_PARAMS_VER }; 
+  // reconfig params
+  NV_ENC_RECONFIGURE_PARAMS reconfigureParams = {NV_ENC_RECONFIGURE_PARAMS_VER};
   // params for one frame
   NV_ENC_PIC_PARAMS picParams = {NV_ENC_PIC_PARAMS_VER};
   // config
   NV_ENC_CONFIG encodeConfig = { NV_ENC_CONFIG_VER };
-  // cuda encoder interface
-  NvEncoderCuda enc;  
+  NV_ENC_CONFIG reInitCodecConfig = { NV_ENC_CONFIG_VER };
+  
   // container
-  onst NvEncInputFrame* encoderInputFrame
   std::vector<std::vector<uint8_t>> vPacket; 
   
 
   /////////////////////////////////////////
   
+  FrameType curr_frame_type_ {FrameType::NONKEY};
   
 
   // print debugging info
@@ -135,10 +147,10 @@ private:
   void add_rtt_sample(const unsigned int rtt_us);
 
   // encode the raw frame stored in 'raw_img'
-  void encode_frame(const std::unique_ptr<uint8_t[]>& pHostFrame)
+  void encode_frame(const std::unique_ptr<uint8_t[]>& pHostFrame);
 
   // packetize the just encoded frame (stored in context_) and return its size
-  size_t packetize_encoded_frame(uint16_t width, uint16_t height);
+  size_t packetize_encoded_frame(std::vector<std::vector<uint8_t>> &vPacket, uint16_t width, uint16_t height);
 
 };
 

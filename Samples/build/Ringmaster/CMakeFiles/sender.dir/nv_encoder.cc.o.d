@@ -371,8 +371,4 @@ Ringmaster/CMakeFiles/sender.dir/nv_encoder.cc.o: \
  /usr/include/fcntl.h /usr/include/x86_64-linux-gnu/bits/fcntl.h \
  /usr/include/x86_64-linux-gnu/bits/fcntl-linux.h \
  /usr/include/linux/falloc.h /usr/include/x86_64-linux-gnu/bits/fcntl2.h \
- /usr/include/vpx/vpx_encoder.h /usr/include/vpx/vpx_codec.h \
- /usr/include/vpx/vpx_image.h /usr/include/vpx/vpx_integer.h \
- /usr/include/vpx/vpx_ext_ratectrl.h /usr/include/vpx/vp8cx.h \
- /usr/include/vpx/vp8.h /usr/include/vpx/vpx_encoder.h \
  /home/tungi/RTS-testbed/Samples/Ringmaster/Utils/conversion.hh

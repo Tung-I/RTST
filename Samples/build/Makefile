@@ -174,6 +174,32 @@ AppEncDec/fast:
 	$(MAKE) $(MAKESILENT) -f AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/build.make AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/build
 .PHONY : AppEncDec/fast
 
+#=============================================================================
+# Target rules for targets named sender
+
+# Build rule for target.
+sender: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 sender
+.PHONY : sender
+
+# fast build rule for target.
+sender/fast:
+	$(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/sender.dir/build.make Ringmaster/CMakeFiles/sender.dir/build
+.PHONY : sender/fast
+
+#=============================================================================
+# Target rules for targets named receiver
+
+# Build rule for target.
+receiver: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 receiver
+.PHONY : receiver
+
+# fast build rule for target.
+receiver/fast:
+	$(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/receiver.dir/build.make Ringmaster/CMakeFiles/receiver.dir/build
+.PHONY : receiver/fast
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -187,6 +213,8 @@ help:
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... AppEncDec"
+	@echo "... receiver"
+	@echo "... sender"
 .PHONY : help
 
 

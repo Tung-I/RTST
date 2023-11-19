@@ -10,13 +10,11 @@
 #include "Utils/udp_socket.hh"
 #include "Video/sdl.hh"
 #include "protocol.hh"
-#include "vp9_decoder.hh"
-// #include "nv_decoder.hh"
+// #include "vp9_decoder.hh"
+#include "TIHWDecoder.hh"
 
 #include "NvCodecUtils.h"
 
-using namespace std;
-using namespace chrono;
 
 simplelogger::Logger *logger = simplelogger::LoggerFactory::CreateConsoleLogger();
 
@@ -120,12 +118,12 @@ int main(int argc, char * argv[])
   cerr <<  "init_signal_msg sent" << endl;
   
   // initialize decoders
-  Decoder decoder(width, height, lazy_level, output_path);
+  TIHWDecoder decoder(width, height, lazy_level, output_path);
   decoder.set_verbose(verbose);
 
   // timer for sending signal messages
-  const auto start_time = steady_clock::now();
-  auto last_time = steady_clock::now();
+  const auto start_time = std::chrono::steady_clock::now();
+  auto last_time = std::chrono::steady_clock::now();
 
   // main loop
   while (true) {
@@ -153,14 +151,14 @@ int main(int argc, char * argv[])
     }
 
     // send a new signal message every 1s
-    if (steady_clock::now() - last_time > seconds(1)) {
+    if (std::chrono::steady_clock::now() - last_time > std::chrono::seconds(1)) {
       // last_time = steady_clock::now();
       // FeedbackMsg feedback_msg(0);
       // signal_sock.send(feedback_msg.serialize_to_string());
     }
 
     // Streaming time up
-    if (steady_clock::now() - start_time > seconds(total_stream_time)) {
+    if (std::chrono::steady_clock::now() - start_time > std::chrono::seconds(total_stream_time)) {
       cerr << "Time's up!" << endl;
       break;
     }

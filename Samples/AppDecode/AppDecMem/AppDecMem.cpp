@@ -77,8 +77,10 @@ int main(int argc, char *argv[])
         createCudaContext(&cuContext, iGpu, 0);
 
         FileDataProvider dp(szInFilePath);
-        // Instead of passing in a media file path, here we pass in a DataProvider, which reads from the file.
-        // Note that the data is passed into the demuxer chunk-by-chunk sequentially. If the meta data is at the end of the file
+        // Instead of passing in a media file path, here we pass in a DataProvider, 
+        // which reads from the file.
+        // Note that the data is passed into the demuxer chunk-by-chunk sequentially.
+        // If the meta data is at the end of the file
         // (as for MP4) and the buffer isn't large enough to hold the whole file, the file may never get demuxed.
         FFmpegDemuxer demuxer(&dp);
         NvDecoder dec(cuContext, false, FFmpeg2NvCodecId(demuxer.GetVideoCodec()));

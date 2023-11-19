@@ -39,9 +39,9 @@ set(NV_ENC_HDRS
 
 set (RM_SOURCES
 #  ${RM_APP_DIR}/vp9_encoder.cc
- ${RM_APP_DIR}/vp9_decoder.cc
- ${RM_APP_DIR}/nv_encoder.cc
-#  ${RM_APP_DIR}/nv_decoder.cc
+#  ${RM_APP_DIR}/vp9_decoder.cc
+ ${RM_APP_DIR}/TIHWEncoder.cc
+ ${RM_APP_DIR}/TIHWDecoder.cc
  ${RM_APP_DIR}/protocol.cc
  ${RM_UTILS_DIR}/address.cc
  ${RM_UTILS_DIR}/conversion.cc
@@ -63,9 +63,9 @@ set (RM_SOURCES
 
 set (RM_HDRS
 #  ${RM_APP_DIR}/vp9_encoder.hh
- ${RM_APP_DIR}/vp9_decoder.hh
- ${RM_APP_DIR}/nv_encoder.hh
-#  ${RM_APP_DIR}/nv_decoder.hh
+#  ${RM_APP_DIR}/vp9_decoder.hh
+ ${RM_APP_DIR}/TIHWEncoder.hh
+ ${RM_APP_DIR}/TIHWDecoder.hh
  ${RM_APP_DIR}/protocol.hh
  ${RM_UTILS_DIR}/address.hh
  ${RM_UTILS_DIR}/conversion.hh

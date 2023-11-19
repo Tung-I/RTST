@@ -64,14 +64,17 @@ CMAKE_BINARY_DIR = /home/tungi/RTS-testbed/Samples/build
 
 # The main recursive "all" target.
 all: AppEncode/AppEncDec/all
+all: Ringmaster/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
 preinstall: AppEncode/AppEncDec/preinstall
+preinstall: Ringmaster/preinstall
 .PHONY : preinstall
 
 # The main recursive "clean" target.
 clean: AppEncode/AppEncDec/clean
+clean: Ringmaster/clean
 .PHONY : clean
 
 #=============================================================================
@@ -88,6 +91,23 @@ AppEncode/AppEncDec/preinstall:
 # Recursive "clean" directory target.
 AppEncode/AppEncDec/clean: AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/clean
 .PHONY : AppEncode/AppEncDec/clean
+
+#=============================================================================
+# Directory level rules for directory Ringmaster
+
+# Recursive "all" directory target.
+Ringmaster/all: Ringmaster/CMakeFiles/sender.dir/all
+Ringmaster/all: Ringmaster/CMakeFiles/receiver.dir/all
+.PHONY : Ringmaster/all
+
+# Recursive "preinstall" directory target.
+Ringmaster/preinstall:
+.PHONY : Ringmaster/preinstall
+
+# Recursive "clean" directory target.
+Ringmaster/clean: Ringmaster/CMakeFiles/sender.dir/clean
+Ringmaster/clean: Ringmaster/CMakeFiles/receiver.dir/clean
+.PHONY : Ringmaster/clean
 
 #=============================================================================
 # Target rules for target AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir
@@ -114,6 +134,58 @@ AppEncDec: AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/rule
 AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/clean:
 	$(MAKE) $(MAKESILENT) -f AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/build.make AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/clean
 .PHONY : AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/clean
+
+#=============================================================================
+# Target rules for target Ringmaster/CMakeFiles/sender.dir
+
+# All Build rule for target.
+Ringmaster/CMakeFiles/sender.dir/all:
+	$(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/sender.dir/build.make Ringmaster/CMakeFiles/sender.dir/depend
+	$(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/sender.dir/build.make Ringmaster/CMakeFiles/sender.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tungi/RTS-testbed/Samples/build/CMakeFiles --progress-num=34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58 "Built target sender"
+.PHONY : Ringmaster/CMakeFiles/sender.dir/all
+
+# Build rule for subdir invocation for target.
+Ringmaster/CMakeFiles/sender.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/tungi/RTS-testbed/Samples/build/CMakeFiles 25
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Ringmaster/CMakeFiles/sender.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/tungi/RTS-testbed/Samples/build/CMakeFiles 0
+.PHONY : Ringmaster/CMakeFiles/sender.dir/rule
+
+# Convenience name for target.
+sender: Ringmaster/CMakeFiles/sender.dir/rule
+.PHONY : sender
+
+# clean rule for target.
+Ringmaster/CMakeFiles/sender.dir/clean:
+	$(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/sender.dir/build.make Ringmaster/CMakeFiles/sender.dir/clean
+.PHONY : Ringmaster/CMakeFiles/sender.dir/clean
+
+#=============================================================================
+# Target rules for target Ringmaster/CMakeFiles/receiver.dir
+
+# All Build rule for target.
+Ringmaster/CMakeFiles/receiver.dir/all:
+	$(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/receiver.dir/build.make Ringmaster/CMakeFiles/receiver.dir/depend
+	$(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/receiver.dir/build.make Ringmaster/CMakeFiles/receiver.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tungi/RTS-testbed/Samples/build/CMakeFiles --progress-num=8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33 "Built target receiver"
+.PHONY : Ringmaster/CMakeFiles/receiver.dir/all
+
+# Build rule for subdir invocation for target.
+Ringmaster/CMakeFiles/receiver.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/tungi/RTS-testbed/Samples/build/CMakeFiles 26
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Ringmaster/CMakeFiles/receiver.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/tungi/RTS-testbed/Samples/build/CMakeFiles 0
+.PHONY : Ringmaster/CMakeFiles/receiver.dir/rule
+
+# Convenience name for target.
+receiver: Ringmaster/CMakeFiles/receiver.dir/rule
+.PHONY : receiver
+
+# clean rule for target.
+Ringmaster/CMakeFiles/receiver.dir/clean:
+	$(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/receiver.dir/build.make Ringmaster/CMakeFiles/receiver.dir/clean
+.PHONY : Ringmaster/CMakeFiles/receiver.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

@@ -1,4 +1,8 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/sender.dir/TIHWDecoder.cc.o"
+  "CMakeFiles/sender.dir/TIHWDecoder.cc.o.d"
+  "CMakeFiles/sender.dir/TIHWEncoder.cc.o"
+  "CMakeFiles/sender.dir/TIHWEncoder.cc.o.d"
   "CMakeFiles/sender.dir/Utils/address.cc.o"
   "CMakeFiles/sender.dir/Utils/address.cc.o.d"
   "CMakeFiles/sender.dir/Utils/conversion.cc.o"
@@ -38,14 +42,10 @@ file(REMOVE_RECURSE
   "CMakeFiles/sender.dir/__/NvCodec/NvEncoder/NvEncoderCuda.cpp.o"
   "CMakeFiles/sender.dir/__/NvCodec/NvEncoder/NvEncoderCuda.cpp.o.d"
   "CMakeFiles/sender.dir/__/Utils/sender_generated_ColorSpace.cu.o"
-  "CMakeFiles/sender.dir/nv_encoder.cc.o"
-  "CMakeFiles/sender.dir/nv_encoder.cc.o.d"
   "CMakeFiles/sender.dir/protocol.cc.o"
   "CMakeFiles/sender.dir/protocol.cc.o.d"
   "CMakeFiles/sender.dir/sender.cpp.o"
   "CMakeFiles/sender.dir/sender.cpp.o.d"
-  "CMakeFiles/sender.dir/vp9_decoder.cc.o"
-  "CMakeFiles/sender.dir/vp9_decoder.cc.o.d"
   "sender"
   "sender.pdb"
 )
