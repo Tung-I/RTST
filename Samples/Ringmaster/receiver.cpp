@@ -133,6 +133,11 @@ int main(int argc, char * argv[])
       throw runtime_error("failed to parse a datagram");
     }
 
+    // // print debugging message
+    // cerr << "Received datagram: frame_id=" << datagram.frame_id
+    //      << " frag_id=" << datagram.frag_id 
+    //      << " frag_cnt=" << datagram.frag_cnt << endl;
+
     // send an ACK back to sender
     AckMsg ack(datagram);
     video_sock.send(ack.serialize_to_string());

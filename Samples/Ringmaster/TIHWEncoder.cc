@@ -138,8 +138,8 @@ void TIHWEncoder::compress_frame(const std::unique_ptr<uint8_t[]>& pHostFrame)
                       double_to_string(*ewma_rtt_us_ / 1000.0) + "\n"); // ms
   }
 
-  // move onto the next frame
-  frame_id_++;
+  // // move onto the next frame
+  // frame_id_++;
 }
 
 void TIHWEncoder::encode_frame(const std::unique_ptr<uint8_t[]>& pHostFrame)
@@ -204,34 +204,51 @@ void TIHWEncoder::encode_frame(const std::unique_ptr<uint8_t[]>& pHostFrame)
 
 size_t TIHWEncoder::packetize_encoded_frame(std::vector<std::vector<uint8_t>> &vPacket, uint16_t width, uint16_t height)
 {
-  // check whether vPacket has exactly one element
-  assert(vPacket.size() == 1);
+  // do nothing if vPacket is empty
+  if (vPacket.empty()) {
+    return 0;
+  }
 
   size_t frame_size = 0;  //bytes
-  for (auto & packet : vPacket) {
-    frame_size += packet.size();
-  }
-  assert(frame_size > 0);
   
-  if (curr_frame_type_ == FrameType::KEY) {
+  
+  auto frame_type  = curr_frame_type_;
+  if (frame_type == FrameType::KEY) {
     if (verbose_) {
       cerr << "Encoded a key frame: frame_id=" << frame_id_ << endl;
     }
   }
   // calculate the number of fragments
-  const uint16_t frag_cnt = narrow_cast<uint16_t>(
-          frame_size / (FrameDatagram::max_payload + 1) + 1);
-  
-  // packetize the data in vPacket[0] into frag_cnt datagrams
-  const uint8_t * buf_ptr = vPacket[0].data();
-  const uint8_t * const buf_end = buf_ptr + frame_size;
-  for (uint16_t frag_id = 0; frag_id < frag_cnt; frag_id++) {
-    const size_t payload_size = (frag_id < frag_cnt - 1) ?
-            FrameDatagram::max_payload : buf_end - buf_ptr;
-    send_buf_.emplace_back(frame_id_, curr_frame_type_, frag_id, frag_cnt, width, height,
-            std::string_view {reinterpret_cast<const char*>(buf_ptr), payload_size});
-    buf_ptr += payload_size;
+  uint16_t frag_cnt = 0;
+  for (const auto &packet : vPacket) {
+    // if packet is empty, skip
+    if (packet.empty()) {
+      continue;
+    }
+    frag_cnt += narrow_cast<uint16_t>(
+      packet.size() / (FrameDatagram::max_payload + 1) + 1);
   }
+  
+  uint16_t frag_id = 0;
+  for (const auto &packet : vPacket) {
+    size_t packet_size = packet.size();
+    size_t processed = 0;  // Amount processed from the current packet
+
+    while (processed < packet_size) {
+      size_t payload_size = std::min(FrameDatagram::max_payload, packet_size - processed);
+      const uint8_t* start_ptr = packet.data() + processed;
+      std::string_view payload(reinterpret_cast<const char*>(start_ptr), payload_size);
+      frame_size += payload_size;
+
+      send_buf_.emplace_back(frame_id_, frame_type, frag_id, frag_cnt, width, height, payload);
+      frag_id++;
+
+      processed += payload_size;
+    }
+
+    frame_id_++;
+  }
+
 
 
   // buf_ptr = static_cast<uint8_t*>(vPacket.data());

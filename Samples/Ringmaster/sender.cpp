@@ -184,8 +184,12 @@ int main(int argc, char * argv[])
         nRead = fpIn.read(reinterpret_cast<char*>(pHostFrame.get()), nHostFrameSize).gcount(); 
         if (nRead != nHostFrameSize) // if end of file
         {
-          std::cout << "Reach the end of the video file." << std::endl;
-          exit(0);
+          // reset the file offset to the beginning
+          fpIn.clear();
+          fpIn.seekg(0, std::ios::beg);
+          nRead = fpIn.read(reinterpret_cast<char*>(pHostFrame.get()), nHostFrameSize).gcount();
+          // std::cout << "Reach the end of the video file." << std::endl;
+          // exit(0);
         }    
       }
 
