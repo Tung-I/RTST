@@ -107,6 +107,7 @@ private:
   
   // container
   std::vector<std::vector<uint8_t>> vPacket; 
+  int nFrameSize = 0;
   
 
   /////////////////////////////////////////

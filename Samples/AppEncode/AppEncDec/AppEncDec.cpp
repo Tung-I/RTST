@@ -258,12 +258,13 @@ void EncodeProc(CUdevice cuDevice, int nWidth, int nHeight, NV_ENC_BUFFER_FORMAT
                 enc.EndEncode(vPacket);
             }
 
-            // check whether vPacket has exactly one element
-            std::cout << "vPacket size: " << vPacket.size() << std::endl;
-            assert(vPacket.size() == 1);
-
 
             // for each packet
+            std::cout << "nFrame: " << nFrame << std::endl;
+            std::cout << "vPacket size: " << vPacket.size() << std::endl;
+            if (vPacket.size() > 0) {
+                std::cout << "vPacket[0] size: " << vPacket[0].size() << std::endl;
+            }
             for (std::vector<uint8_t> &packet : vPacket) {
                 streamer.Stream(packet.data(), (int)packet.size(), nFrame++);
             }
@@ -380,6 +381,15 @@ void DecodeProc(CUdevice cuDevice, const char *szMediaUri, OutputFormat eOutputF
                             P016ToColor64<BGRA64>(pFrame, nWidth * 2, (uint8_t *)dpRgbFrame, nRgbFramePitch, nWidth, nHeight, iMatrix);
                         }
                     }
+
+                    // // print out the size of pRgbFrame
+                    // std::cout << "pRgbFrame size: " << nRgbFrameSize << std::endl;
+                    // std::cout << "nRGBFramePitch: " << nRgbFramePitch << std::endl;
+                    // std::cout << "display_width_: " << nWidth << std::endl;
+                    // std::cout << "display_height_: " << nHeight << std::endl;
+                    // std::cout << "pRgbFrame.get() size: " << sizeof(pRgbFrame.get()) << std::endl;
+                    // std::cout << "dec.getframesize():" << dec.GetFrameSize() << std::endl;
+
                     ck(cuMemcpyDtoH(pRgbFrame.get(), dpRgbFrame, nRgbFrameSize));
                     fpOut.write(reinterpret_cast<char*>(pRgbFrame.get()), nRgbFrameSize);
                 }

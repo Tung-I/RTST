@@ -108,25 +108,7 @@ TIHWDecoder::TIHWDecoder(const uint16_t display_width,
     cerr << "Spawned a new thread for decoding and displaying frames" << endl;
   }
 
-  // Check cuda device
-  ck(cuInit(0));
-  int nGpu = 0;
-  ck(cuDeviceGetCount(&nGpu));
-  if (iGpu < 0 || iGpu >= nGpu) {
-      std::cout << "GPU ordinal out of range. Should be within [" << 0 << ", " << nGpu - 1 << "]" << std::endl;
-      exit(1);
 
-  }
-  CUdevice cuDevice = 0;
-  ck(cuDeviceGet(&cuDevice, iGpu));
-  char szDeviceName[80];
-  ck(cuDeviceGetName(szDeviceName, sizeof(szDeviceName), cuDevice));
-  std::cout << "GPU in use: " << szDeviceName << std::endl;
-
-
-  // create decoder interface  
-  ck(cuCtxCreate(&cuContext, 0, cuDevice));
-  pdec = new NvDecoder(cuContext, false, cudaVideoCodec_HEVC);
 }
 
 bool TIHWDecoder::add_datagram_common(const FrameDatagram & datagram)
@@ -276,19 +258,73 @@ void TIHWDecoder::clean_up_to(const uint32_t frontier)
   }
 }
 
+// double TIHWDecoder::decode_frame(const Frame & frame)
+// {
+//   if (not frame.complete()) {
+//     throw runtime_error("frame must be complete before decoding");
+//   }
+
+//   // allocate a decoding buffer once
+//   static constexpr size_t MAX_DECODING_BUF = 2000000; // 2 MB
+//   static vector<uint8_t> decode_buf(MAX_DECODING_BUF);
+
+//   // copy the payload of the frame's datagrams to 'decode_buf'
+//   uint8_t * buf_ptr = decode_buf.data();
+//   const uint8_t * const buf_end = buf_ptr + decode_buf.size();
+
+//   for (const auto & datagram : frame.frags()) {
+//     const string & payload = datagram.value().payload;
+
+//     if (buf_ptr + payload.size() >= buf_end) {
+//       throw runtime_error("frame size exceeds max decoding buffer size");
+//     }
+
+//     memcpy(buf_ptr, payload.data(), payload.size());
+//     buf_ptr += payload.size();
+//   }
+
+//   const size_t frame_size = buf_ptr - decode_buf.data(); 
+
+//   // decode the compressed frame in 'decode_buf'
+//   const auto decode_start = std::chrono::steady_clock::now();
+
+//   // print out buf ptr and frame_size
+//   cerr << "buf_ptr: " << buf_ptr << endl;
+//   cerr << "frame_size: " << frame_size << endl;
+
+//   nFrameReturned = pdec->Decode(buf_ptr, frame_size);
+                    
+//   // if (nFrameReturned != 0){
+//   //   throw runtime_error("There should be exactly one frame decoded");
+//   // }
+//   // print out nFrameReturned
+//   cerr << "nFrameReturned: " << nFrameReturned << endl;
+//   const auto decode_end = std::chrono::steady_clock::now();
+
+//   return std::chrono::duration<double, milli>(decode_end - decode_start).count();
+// }
+
+
 double TIHWDecoder::decode_frame(const Frame & frame)
 {
+
+
+  const auto decode_start = std::chrono::steady_clock::now();
+
   if (not frame.complete()) {
     throw runtime_error("frame must be complete before decoding");
   }
 
   // allocate a decoding buffer once
-  static constexpr size_t MAX_DECODING_BUF = 2000000; // 2 MB
+  static constexpr size_t MAX_DECODING_BUF = 5000000; // 2 MB
   static vector<uint8_t> decode_buf(MAX_DECODING_BUF);
 
   // copy the payload of the frame's datagrams to 'decode_buf'
   uint8_t * buf_ptr = decode_buf.data();
   const uint8_t * const buf_end = buf_ptr + decode_buf.size();
+
+
+  // cerr << "frame.frags().size(): " << frame.frags().size() << endl;
 
   for (const auto & datagram : frame.frags()) {
     const string & payload = datagram.value().payload;
@@ -298,48 +334,141 @@ double TIHWDecoder::decode_frame(const Frame & frame)
     }
 
     memcpy(buf_ptr, payload.data(), payload.size());
+
+    ///////////////////////////////////////////////////////////
+    // nFrameReturned = pdec->Decode(buf_ptr, payload.size(), CUVID_PKT_ENDOFPICTURE);
+    // cerr << "nFrameReturned: " << nFrameReturned << endl;
+    // nFrame_decoded += nFrameReturned;
+    ///////////////////////////////////////////////////////////
+
     buf_ptr += payload.size();
+
   }
 
   const size_t frame_size = buf_ptr - decode_buf.data(); 
 
-  // decode the compressed frame in 'decode_buf'
-  const auto decode_start = std::chrono::steady_clock::now();
-  nFrameReturned = pdec->Decode(buf_ptr, frame_size);
-  if (nFrameReturned != 0){
-    throw runtime_error("There should be exactly one frame decoded");
-  }
+  nFrameReturned = pdec->Decode(decode_buf.data(), frame_size, CUVID_PKT_ENDOFPICTURE);
+  // cerr << "nFrameReturned: " << nFrameReturned << endl;
+  nFrame_decoded += nFrameReturned;
+
+  // pFrame = pdec->GetFrame();
+  // uint16_t pFrameSize =  pdec->GetFrameSize();
+  // cerr << "pFrameSize: " << pFrameSize << endl;
+  // cerr << "frame_size: " << frame_size << endl;
+
+  
   const auto decode_end = std::chrono::steady_clock::now();
 
   return std::chrono::duration<double, milli>(decode_end - decode_start).count();
 }
 
 
+// void TIHWDecoder::display_decoded_frame(VideoDisplay & display)
+// {
+//   unsigned int frame_decoded = 0;
+
+//   cerr << "nFrame_decoded: " << nFrame_decoded << endl;
+//   while (nFrame_decoded > 0){
+//     pFrame = pdec->GetFrame();
+
+//     // convert to bgra
+//     int iMatrix = pdec->GetVideoFormatInfo().video_signal_description.matrix_coefficients;
+//     Nv12ToColor32<BGRA32>(pFrame, display_width_, (uint8_t *)dpRgbFrame, nRgbFramePitch, display_width_, display_height_, iMatrix);
+    
+//     std::cout << "pRgbFrame size: " << nRgbFrameSize << std::endl;
+//     std::cout << "nRGBFramePitch: " << nRgbFramePitch << std::endl;
+//     std::cout << "display_width_: " << display_width_ << std::endl;
+//     std::cout << "display_height_: " << display_height_ << std::endl;
+//     std::cout << "pRgbFrame.get() size: " << sizeof(pRgbFrame.get()) << std::endl;
+//     std::cout << "dec.getframesize():" << pdec->GetFrameSize() << std::endl;
+//     ck(cuMemcpyDtoH(pRgbFrame.get(), dpRgbFrame, nRgbFrameSize));
+
+//     int pFrameSize =  pdec->GetFrameSize();  
+    
+//     frame_decoded++;
+//     if (frame_decoded > 1) {
+//       throw runtime_error("Multiple frames were decoded at once");
+//     }
+//     display.show_frame(pRgbFrame);
+//     nFrame_decoded--;
+//   }
+// }
+
 void TIHWDecoder::display_decoded_frame(VideoDisplay & display)
 {
+  NV12Image * pNV12_image = new NV12Image(display_width_, display_height_);
   unsigned int frame_decoded = 0;
 
-  pFrame = pdec->GetFrame();
-  frame_decoded++;
-  if (frame_decoded > 1) {
-    throw runtime_error("Multiple frames were decoded at once");
-  }
+  // display the decoded frame stored in 'context_'
+  while (nFrame_decoded > 0) {
+    frame_decoded++;
+    if (frame_decoded > 1) {
+      throw runtime_error("Multiple frames were decoded at once");
+    }
 
-//   display.show_frame(RawImage(raw_img));
+    pFrame = pdec->GetFrame();
+    int frame_size = pdec->GetFrameSize();
+
+
+
+    pNV12_image->store_nv12_frame(pFrame, frame_size);
+    // construct a temporary RawImage that does not own the raw_img
+    display.show_frame(*pNV12_image);
+
+    
+    
+    nFrame_decoded--;
+  }
 }
 
 
 void TIHWDecoder::worker_main()
 {
+
   // worker does nothing if not decode or display
   if (lazy_level_ == NO_DECODE_DISPLAY) {
     return;
   }
 
 
+  ////////////////////////////////////////////
+  // Check cuda device
+  ck(cuInit(0));
+  int nGpu = 0;
+  ck(cuDeviceGetCount(&nGpu));
+  if (iGpu < 0 || iGpu >= nGpu) {
+      std::cout << "GPU ordinal out of range. Should be within [" << 0 << ", " << nGpu - 1 << "]" << std::endl;
+      exit(1);
+
+  }
+  CUdevice cuDevice = 0;
+  ck(cuDeviceGet(&cuDevice, iGpu));
+  char szDeviceName[80];
+  ck(cuDeviceGetName(szDeviceName, sizeof(szDeviceName), cuDevice));
+  std::cout << "GPU in use: " << szDeviceName << std::endl;
+
+
+  // create decoder interface  
+  ck(cuCtxCreate(&cuContext, 0, cuDevice));
+  bool force_zero_latency = true;
+  pdec = new NvDecoder(cuContext, eOutputFormat != native, cudaVideoCodec_HEVC, 
+    true, false, NULL, NULL, false, 0, 0, 1000, force_zero_latency);
+
+  // // initialize display frame
+  // if (eOutputFormat != native) {
+  //     nRgbFramePitch = display_width_ * (eOutputFormat == bgra ? 4 : 8);
+  //     nRgbFrameSize = nRgbFramePitch * display_height_;
+  //     pRgbFrame.reset(new uint8_t[nRgbFrameSize]);
+  //     ck(cuMemAlloc(&dpRgbFrame, nRgbFrameSize));
+  // }
+  /////////////////////////////////////////////
+
+
+
   // video display
   unique_ptr<VideoDisplay> display;
   if (lazy_level_ == DECODE_DISPLAY) {
+    // display = make_unique<VideoDisplay>(display_width_, display_height_);
     display = make_unique<VideoDisplay>(display_width_, display_height_);
   }
 

@@ -8,6 +8,7 @@ extern "C" {
 #include <string_view>
 #include <vector>
 #include <cmath>
+#include <iostream>
 
 // wrapper class for vpx_image of format I420
 class RawImage
@@ -56,6 +57,10 @@ public:
   const RawImage & operator=(const RawImage & other) = delete;
   RawImage(RawImage && other) = delete;
   RawImage & operator=(RawImage && other) = delete;
+  
+  // // convert NV12 to I420
+  // void store_nv12_frame(const uint8_t* nv12_data, int frame_size);
+
 
 private:
   // underlying vpx_image
@@ -69,6 +74,37 @@ private:
   uint16_t display_height_;
 };
 
+/////////////////////////////////////////////////////////////////////////////
+
+
+class NV12Image {
+public:
+    NV12Image(const uint16_t display_width, const uint16_t display_height);
+    ~NV12Image();
+
+    void store_nv12_frame(const uint8_t* nv12_data, size_t data_size);
+    
+    // Accessors similar to RawImage
+    uint16_t display_width() const { return display_width_; }
+    uint16_t display_height() const { return display_height_; }
+    uint8_t* y_plane() const { return vpx_img_->planes[VPX_PLANE_Y]; }
+    uint8_t* u_plane() const { return vpx_img_->planes[VPX_PLANE_U]; }
+    uint8_t* v_plane() const { return vpx_img_->planes[VPX_PLANE_V]; }
+    int y_stride() const { return vpx_img_->stride[VPX_PLANE_Y]; }
+    int u_stride() const { return vpx_img_->stride[VPX_PLANE_U]; }
+    int v_stride() const { return vpx_img_->stride[VPX_PLANE_V]; }
+
+    // Copy and move operators are forbidden
+    NV12Image(const NV12Image&) = delete;
+    NV12Image& operator=(const NV12Image&) = delete;
+    NV12Image(NV12Image&&) = delete;
+    NV12Image& operator=(NV12Image&&) = delete;
+
+private:
+    vpx_image_t* vpx_img_ {nullptr};
+    uint16_t display_width_;
+    uint16_t display_height_;
+};
 
 class TiledImage
 {

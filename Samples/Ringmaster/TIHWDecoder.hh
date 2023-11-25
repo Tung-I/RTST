@@ -152,19 +152,32 @@ private:
 
   // worker thread calls the functions below
   double decode_frame(const Frame & frame);
+  // void display_decoded_frame(VideoDisplay & display); 
   void display_decoded_frame(VideoDisplay & display); 
 
   // NVDEC
   CUcontext cuContext = NULL;
   OutputFormat eOutputFormat = native;
+  // OutputFormat eOutputFormat = bgra;
   int nFrameReturned = 0;
   int iGpu = 0;
   uint8_t *pFrame;
   NvDecoder *pdec = NULL;
+  const char *szTail = "\xe0\x00\x00\x00\x01\xce\x8c\x4d\x9d\x10\x8e\x25\xe9\xfe";
+  
+
+  // raw image
+  std::unique_ptr<uint8_t[]> pRgbFrame; 
+  int nRgbFramePitch = 0;
+  int nRgbFrameSize = 0;
+  uint16_t nFrame_decoded = 0;
+  CUdeviceptr dpRgbFrame = 0;
 
   // main function for the worker thread
   void worker_main();
 
 };
+
+
 
 #endif /* DECODER_HH */

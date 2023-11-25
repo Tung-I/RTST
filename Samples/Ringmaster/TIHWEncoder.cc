@@ -69,13 +69,16 @@ TIHWEncoder::TIHWEncoder(const uint16_t nWidth,
 
   // Set the config and initialize params
   initializeParams.encodeConfig = &encodeConfig; 
+  // penc->CreateDefaultEncoderParams(&initializeParams, pEncodeCLIOptions->GetEncodeGUID(), 
+  //     pEncodeCLIOptions->GetPresetGUID(), pEncodeCLIOptions->GetTuningInfo());
   penc->CreateDefaultEncoderParams(&initializeParams, pEncodeCLIOptions->GetEncodeGUID(), 
       pEncodeCLIOptions->GetPresetGUID(), pEncodeCLIOptions->GetTuningInfo());
   encodeConfig.gopLength = NVENC_INFINITE_GOPLENGTH;
-  encodeConfig.frameIntervalP = 1;
+
   encodeConfig.rcParams.disableIadapt = 1;
   encodeConfig.rcParams.disableBadapt = 1;
   initializeParams.enablePTD == 1;
+
   // encodeConfig->encodeCodecConfig.hevcConfig.hevcVUIParameters.videoSignalTypePresentFlag = 1;
   // encodeConfig->encodeCodecConfig.hevcConfig.hevcVUIParameters.colourDescriptionPresentFlag = 1;
   // encodeConfig->encodeCodecConfig.hevcConfig.hevcVUIParameters.colourMatrix = NV_ENC_VUI_MATRIX_COEFFS_FCC;
@@ -105,8 +108,10 @@ TIHWEncoder::TIHWEncoder(const uint16_t nWidth,
   pEncodeCLIOptions->SetInitParams(&initializeParams, eInputFormat);
   penc->CreateEncoder(&initializeParams);
 
-
-  
+  // Params for one frame
+  picParams.encodePicFlags = 0;
+  std::streamsize  nRead = 0;
+  nFrameSize = penc->GetFrameSize();  
   
 }
 
@@ -145,7 +150,9 @@ void TIHWEncoder::compress_frame(const std::unique_ptr<uint8_t[]>& pHostFrame)
 void TIHWEncoder::encode_frame(const std::unique_ptr<uint8_t[]>& pHostFrame)
 {
   // default: normal frame
-  picParams.encodePicFlags = 0;
+  // picParams.encodePicFlags = frame_id_ == 0 ? NV_ENC_PIC_FLAG_FORCEIDR : 0;
+   picParams.encodePicFlags = 0;
+   curr_frame_type_ = FrameType::NONKEY;
 
   // clean up if we've given up on retransmissions
   if (not unacked_.empty()) {
@@ -155,8 +162,8 @@ void TIHWEncoder::encode_frame(const std::unique_ptr<uint8_t[]>& pHostFrame)
     // give up if first unacked datagram was initially sent MAX_UNACKED_US ago
     if (us_since_first_send > MAX_UNACKED_US) {
 
-      picParams.encodePicFlags = NV_ENC_PIC_FLAG_FORCEINTRA;  // force an I frame
-      curr_frame_type_ = FrameType::KEY;
+      // picParams.encodePicFlags = NV_ENC_PIC_FLAG_FORCEINTRA;  // force an I frame
+      // curr_frame_type_ = FrameType::KEY;
 
       cerr << "* Recovery: gave up retransmissions and forced a key frame "
            << frame_id_ << endl;
@@ -196,6 +203,12 @@ void TIHWEncoder::encode_frame(const std::unique_ptr<uint8_t[]>& pHostFrame)
   const auto encode_end = std::chrono::steady_clock::now();
   const double encode_time_ms = std::chrono::duration<double, milli>(encode_end - encode_start).count();
 
+  // // std::cout << "nFrame: " << num_encoded_frames_ << std::endl;
+  // std::cout << "vPacket size: " << vPacket.size() << std::endl;
+  // if (vPacket.size() > 0) {
+  //     std::cout << "vPacket[0] size: " << vPacket[0].size() << std::endl;
+  // }
+
   // track stats in the current period
   num_encoded_frames_++;
   total_encode_time_ms_ += encode_time_ms;
@@ -221,7 +234,6 @@ size_t TIHWEncoder::packetize_encoded_frame(std::vector<std::vector<uint8_t>> &v
   // calculate the number of fragments
   uint16_t frag_cnt = 0;
   for (const auto &packet : vPacket) {
-    // if packet is empty, skip
     if (packet.empty()) {
       continue;
     }
@@ -230,6 +242,7 @@ size_t TIHWEncoder::packetize_encoded_frame(std::vector<std::vector<uint8_t>> &v
   }
   
   uint16_t frag_id = 0;
+  // std::cout << vPacket.size() << std::endl;
   for (const auto &packet : vPacket) {
     size_t packet_size = packet.size();
     size_t processed = 0;  // Amount processed from the current packet
@@ -239,15 +252,24 @@ size_t TIHWEncoder::packetize_encoded_frame(std::vector<std::vector<uint8_t>> &v
       const uint8_t* start_ptr = packet.data() + processed;
       std::string_view payload(reinterpret_cast<const char*>(start_ptr), payload_size);
       frame_size += payload_size;
-
+ 
       send_buf_.emplace_back(frame_id_, frame_type, frag_id, frag_cnt, width, height, payload);
       frag_id++;
 
       processed += payload_size;
     }
-
-    frame_id_++;
   }
+
+  //   size_t packet_size = packet.size();
+  //   std::string_view payload(reinterpret_cast<const char*>(packet.data()), packet_size);
+  //   frame_size += packet_size;
+  //   std::cout << "packet_size: " << packet_size << std::endl;
+  //   send_buf_.emplace_back(frame_id_, frame_type, frag_id, frag_cnt, width, height, payload);
+  //   frag_id++;
+  // }
+
+
+  frame_id_++;
 
 
 
