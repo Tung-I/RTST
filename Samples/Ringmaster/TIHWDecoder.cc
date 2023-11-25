@@ -307,58 +307,39 @@ void TIHWDecoder::clean_up_to(const uint32_t frontier)
 
 double TIHWDecoder::decode_frame(const Frame & frame)
 {
-
-
   const auto decode_start = std::chrono::steady_clock::now();
 
   if (not frame.complete()) {
     throw runtime_error("frame must be complete before decoding");
   }
 
-  // allocate a decoding buffer once
-  static constexpr size_t MAX_DECODING_BUF = 5000000; // 2 MB
+  static constexpr size_t MAX_DECODING_BUF = 3000000; 
   static vector<uint8_t> decode_buf(MAX_DECODING_BUF);
-
-  // copy the payload of the frame's datagrams to 'decode_buf'
   uint8_t * buf_ptr = decode_buf.data();
   const uint8_t * const buf_end = buf_ptr + decode_buf.size();
 
 
-  // cerr << "frame.frags().size(): " << frame.frags().size() << endl;
+  size_t total_payload_size = 0;
 
   for (const auto & datagram : frame.frags()) {
     const string & payload = datagram.value().payload;
-
     if (buf_ptr + payload.size() >= buf_end) {
       throw runtime_error("frame size exceeds max decoding buffer size");
     }
 
     memcpy(buf_ptr, payload.data(), payload.size());
 
-    ///////////////////////////////////////////////////////////
-    // nFrameReturned = pdec->Decode(buf_ptr, payload.size(), CUVID_PKT_ENDOFPICTURE);
-    // cerr << "nFrameReturned: " << nFrameReturned << endl;
-    // nFrame_decoded += nFrameReturned;
-    ///////////////////////////////////////////////////////////
+    total_payload_size += payload.size();
 
     buf_ptr += payload.size();
-
   }
 
+  // std::cout << "frame ID: " << frame.id() << std::endl;
+  // std::cout << "total_received_payload_size: " << total_payload_size << std::endl;
   const size_t frame_size = buf_ptr - decode_buf.data(); 
-
-  nFrameReturned = pdec->Decode(decode_buf.data(), frame_size, CUVID_PKT_ENDOFPICTURE);
-  // cerr << "nFrameReturned: " << nFrameReturned << endl;
-  nFrame_decoded += nFrameReturned;
-
-  // pFrame = pdec->GetFrame();
-  // uint16_t pFrameSize =  pdec->GetFrameSize();
-  // cerr << "pFrameSize: " << pFrameSize << endl;
-  // cerr << "frame_size: " << frame_size << endl;
-
-  
+  int nFrameReturned = pdec->Decode(decode_buf.data(), frame_size, CUVID_PKT_ENDOFPICTURE);
+  nFrameToDisplay_ += nFrameReturned;
   const auto decode_end = std::chrono::steady_clock::now();
-
   return std::chrono::duration<double, milli>(decode_end - decode_start).count();
 }
 
@@ -396,28 +377,30 @@ double TIHWDecoder::decode_frame(const Frame & frame)
 
 void TIHWDecoder::display_decoded_frame(VideoDisplay & display)
 {
-  NV12Image * pNV12_image = new NV12Image(display_width_, display_height_);
-  unsigned int frame_decoded = 0;
 
   // display the decoded frame stored in 'context_'
-  while (nFrame_decoded > 0) {
-    frame_decoded++;
-    if (frame_decoded > 1) {
+  while (nFrameToDisplay_ > 0) {
+    if (nFrameToDisplay_ > 1) {
       throw runtime_error("Multiple frames were decoded at once");
     }
 
+    const auto ts_before_display = std::chrono::steady_clock::now();
+
+    NV12Image * pNV12_image = new NV12Image(display_width_, display_height_);
     pFrame = pdec->GetFrame();
-    int frame_size = pdec->GetFrameSize();
-
-
-
-    pNV12_image->store_nv12_frame(pFrame, frame_size);
+    // int frame_size = pdec->GetFrameSize();
+    pNV12_image->store_nv12_frame(pFrame, pdec->GetFrameSize());
     // construct a temporary RawImage that does not own the raw_img
     display.show_frame(*pNV12_image);
 
+    const auto ts_after_display = std::chrono::steady_clock::now();
+      const double diff_ms = std::chrono::duration<double, milli>(
+                           ts_after_display - ts_before_display).count();
+    std::cout << "store and display latency: " << diff_ms << std::endl;
+
     
     
-    nFrame_decoded--;
+    nFrameToDisplay_--;
   }
 }
 
@@ -450,7 +433,8 @@ void TIHWDecoder::worker_main()
 
   // create decoder interface  
   ck(cuCtxCreate(&cuContext, 0, cuDevice));
-  bool force_zero_latency = true;
+  // bool force_zero_latency = true;
+  bool force_zero_latency = false;
   pdec = new NvDecoder(cuContext, eOutputFormat != native, cudaVideoCodec_HEVC, 
     true, false, NULL, NULL, false, 0, 0, 1000, force_zero_latency);
 
@@ -512,6 +496,7 @@ void TIHWDecoder::worker_main()
       if (display) {
         display_decoded_frame(*display); 
       }
+
 
       local_queue.pop_front();
 

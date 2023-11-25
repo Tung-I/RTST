@@ -52,6 +52,8 @@ public:
   std::optional<size_t> frame_size() const;
 
   // accessors
+  // uint32_t id() const { return id_; }
+  // FrameType type() const { return type_; }
   uint32_t id() const { return id_; }
   FrameType type() const { return type_; }
 
@@ -133,7 +135,7 @@ private:
   size_t total_decodable_frame_size_ {0}; // bytes
   std::chrono::time_point<std::chrono::steady_clock> last_stats_time_ {};
 
-  // shared between main (Decoder) and worker threads
+  // shared between main (Decoder) and wonFrame_decoded rker threads
   std::mutex mtx_ {};
   std::condition_variable cv_ {};
   std::deque<Frame> shared_queue_ {};
@@ -159,7 +161,6 @@ private:
   CUcontext cuContext = NULL;
   OutputFormat eOutputFormat = native;
   // OutputFormat eOutputFormat = bgra;
-  int nFrameReturned = 0;
   int iGpu = 0;
   uint8_t *pFrame;
   NvDecoder *pdec = NULL;
@@ -170,7 +171,7 @@ private:
   std::unique_ptr<uint8_t[]> pRgbFrame; 
   int nRgbFramePitch = 0;
   int nRgbFrameSize = 0;
-  uint16_t nFrame_decoded = 0;
+  int nFrameToDisplay_ = 0;
   CUdeviceptr dpRgbFrame = 0;
 
   // main function for the worker thread

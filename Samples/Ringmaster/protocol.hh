@@ -53,7 +53,8 @@ struct FrameDatagram : public BaseDatagram
                 const uint16_t _frag_cnt, 
                 const uint16_t _frame_width,
                 const uint16_t _frame_height,
-                const std::string_view _payload);
+                const std::string_view _payload
+                );
   
   uint16_t frame_width {};
   uint16_t frame_height {};  
