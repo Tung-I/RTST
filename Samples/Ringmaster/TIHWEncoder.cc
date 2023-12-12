@@ -25,6 +25,8 @@
 #include "../Utils/FFmpegDemuxer.h"
 #include "../Utils/ColorSpace.h"
 
+simplelogger::Logger *logger = simplelogger::LoggerFactory::CreateConsoleLogger();
+
 TIHWEncoder::TIHWEncoder(const uint16_t nWidth,
                  const uint16_t nHeight,
                  const uint16_t frame_rate,
@@ -33,17 +35,16 @@ TIHWEncoder::TIHWEncoder(const uint16_t nWidth,
     frame_rate_(frame_rate), output_fd_()
     {
   
-  // open the output file
-  if (not output_path.empty()) {
+  if (not output_path.empty()) {  // for logging
     output_fd_ = FileDescriptor(check_syscall(
         open(output_path.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644)));
   }
 
   ValidateResolution(nWidth, nHeight);
 
-  // initialize encoder parameters
-  std::string CommandLineParam = 
-    "-codec hevc -fps 30";
+  // Initialize enc parameters
+  string used_codec = "hevc";
+  std::string CommandLineParam = "-codec " + used_codec + " -fps " + std::to_string(frame_rate_);
   EncodeCLIOptions = NvEncoderInitParam(CommandLineParam.c_str(), NULL);
   NvEncoderInitParam *pEncodeCLIOptions = &EncodeCLIOptions; 
 
@@ -52,7 +53,7 @@ TIHWEncoder::TIHWEncoder(const uint16_t nWidth,
   int nGpu = 0;
   ck(cuDeviceGetCount(&nGpu));
   if (iGpu < 0 || iGpu >= nGpu) {
-      std::cout << "GPU ordinal out of range. Should be within [" << 0 << ", " << nGpu - 1 << "]" << std::endl;
+      LOG(LogLevel::ERROR) << "GPU ordinal out of range. Should be within [" << 0 << ", " << nGpu - 1 << "]";
       exit(1);
 
   }
@@ -60,46 +61,41 @@ TIHWEncoder::TIHWEncoder(const uint16_t nWidth,
   ck(cuDeviceGet(&cuDevice, iGpu));
   char szDeviceName[80];
   ck(cuDeviceGetName(szDeviceName, sizeof(szDeviceName), cuDevice));
-  std::cout << "GPU in use: " << szDeviceName << std::endl;
+  LOG(LogLevel::INFO) << "GPU in use: " << szDeviceName;
 
-  // Create cuda encoder interface
+  // Create nvenc cuda interface
   ck(cuCtxCreate(&cuContext, 0, cuDevice));  
   penc = new NvEncoderCuda(cuContext, nWidth, nHeight, eInputFormat, 3, false, false, false);
    
 
   // Set the config and initialize params
   initializeParams.encodeConfig = &encodeConfig; 
-  // penc->CreateDefaultEncoderParams(&initializeParams, pEncodeCLIOptions->GetEncodeGUID(), 
-  //     pEncodeCLIOptions->GetPresetGUID(), pEncodeCLIOptions->GetTuningInfo());
   penc->CreateDefaultEncoderParams(&initializeParams, pEncodeCLIOptions->GetEncodeGUID(), 
       pEncodeCLIOptions->GetPresetGUID(), pEncodeCLIOptions->GetTuningInfo());
-  encodeConfig.gopLength = NVENC_INFINITE_GOPLENGTH;
 
-  // encodeConfig.rcParams.disableIadapt = 1;
-  // encodeConfig.rcParams.disableBadapt = 1;
-  // initializeParams.enablePTD == 1;
+  encodeConfig.gopLength = NVENC_INFINITE_GOPLENGTH;
+  encodeConfig.rcParams.disableIadapt = 1;  // disable adaptive insertion of intra frames and B frames
+  encodeConfig.rcParams.disableBadapt = 1;
+  initializeParams.enablePTD == 1;  // the decision of determining the picture type will be taken by NVENCODE API
 
   // encodeConfig->encodeCodecConfig.hevcConfig.hevcVUIParameters.videoSignalTypePresentFlag = 1;
   // encodeConfig->encodeCodecConfig.hevcConfig.hevcVUIParameters.colourDescriptionPresentFlag = 1;
   // encodeConfig->encodeCodecConfig.hevcConfig.hevcVUIParameters.colourMatrix = NV_ENC_VUI_MATRIX_COEFFS_FCC;
 
-  if (pEncodeCLIOptions->IsCodecH264())
-  {
+  if (pEncodeCLIOptions->IsCodecH264()){
     encodeConfig.encodeCodecConfig.h264Config.idrPeriod = NVENC_INFINITE_GOPLENGTH;
-  }
-  else if (pEncodeCLIOptions->IsCodecHEVC())
-  {
+  }else if (pEncodeCLIOptions->IsCodecHEVC()){
     encodeConfig.encodeCodecConfig.hevcConfig.idrPeriod = NVENC_INFINITE_GOPLENGTH;
-  }
-	else
-	{
+  }else{
 		encodeConfig.encodeCodecConfig.av1Config.idrPeriod = NVENC_INFINITE_GOPLENGTH;
 	}
   
   encodeConfig.rcParams.rateControlMode = NV_ENC_PARAMS_RC_CBR;
   encodeConfig.rcParams.multiPass = NV_ENC_MULTI_PASS_DISABLED;
-  encodeConfig.rcParams.averageBitRate = (static_cast<unsigned int>(5.0f * initializeParams.encodeWidth * initializeParams.encodeHeight) / (1280 * 720)) * 100000;
-  encodeConfig.rcParams.vbvBufferSize = (encodeConfig.rcParams.averageBitRate * initializeParams.frameRateDen / initializeParams.frameRateNum) * 5;  // 5-frame length
+  encodeConfig.rcParams.averageBitRate = 
+    (static_cast<unsigned int>(5.0f * initializeParams.encodeWidth * initializeParams.encodeHeight) / (1280 * 720)) * 100000;
+  encodeConfig.rcParams.vbvBufferSize =  // 5-frame length
+    (encodeConfig.rcParams.averageBitRate * initializeParams.frameRateDen / initializeParams.frameRateNum) * 5; 
   encodeConfig.rcParams.maxBitRate = encodeConfig.rcParams.averageBitRate;
   encodeConfig.rcParams.vbvInitialDelay = encodeConfig.rcParams.vbvBufferSize;
 
@@ -161,10 +157,10 @@ void TIHWEncoder::encode_frame(const std::unique_ptr<uint8_t[]>& pHostFrame)
       picParams.encodePicFlags = NV_ENC_PIC_FLAG_FORCEINTRA;  // force an I frame
       curr_frame_type_ = FrameType::KEY;
 
-      cerr << "* Recovery: gave up retransmissions and forced a key frame "
+      LOG(LogLevel::WARNING) << endl << "* Recovery: gave up retransmissions and forced a key frame "
            << frame_id_ << endl;
       if (verbose_) {
-        cerr << "Giving up on lost datagram: frame_id="
+        LOG(LogLevel::WARNING) << endl << "Giving up on lost datagram: frame_id="
              << first_unacked.frame_id << " frag_id=" << first_unacked.frag_id
              << " rtx=" << first_unacked.num_rtx
              << " us_since_first_send=" << us_since_first_send << endl;
@@ -343,17 +339,18 @@ void TIHWEncoder::add_rtt_sample(const unsigned int rtt_us)
 
 void TIHWEncoder::output_periodic_stats()
 {
-  cerr << "Frames encoded in the last ~1s: " << num_encoded_frames_ << endl;
+  LOG(LogLevel::INFO) << "Frames encoded in the last ~1s: " << num_encoded_frames_;
 
   if (num_encoded_frames_ > 0) {
-    cerr << "  - Avg/Max encoding time (ms): "
+    LOG(LogLevel::INFO) << "  - Avg/Max encoding time (ms): "
          << double_to_string(total_encode_time_ms_ / num_encoded_frames_)
-         << "/" << double_to_string(max_encode_time_ms_) << endl;
+         << "/" << double_to_string(max_encode_time_ms_);
   }
 
   if (min_rtt_us_ and ewma_rtt_us_) {
-    cerr << "  - Min/EWMA RTT (ms): " << double_to_string(*min_rtt_us_ / 1000.0)
-         << "/" << double_to_string(*ewma_rtt_us_ / 1000.0) << endl;
+
+    LOG(LogLevel::INFO) << "  - Min/EWMA RTT (ms): " << double_to_string(*min_rtt_us_ / 1000.0) 
+        << "/" << double_to_string(*ewma_rtt_us_ / 1000.0);
   }
 
   // reset all but RTT-related stats
@@ -364,14 +361,12 @@ void TIHWEncoder::output_periodic_stats()
 
 void TIHWEncoder::set_target_bitrate(const unsigned int bitrate_kbps)
 {
-  target_bitrate_ = bitrate_kbps * 1000;
+  target_bitrate_ = bitrate_kbps * 1000;  // bps
 
-  // copy the current config
+  // update the reconfigure params
   memcpy(&reconfigureParams.reInitEncodeParams, &initializeParams, sizeof(initializeParams));
   memcpy(&reInitCodecConfig, initializeParams.encodeConfig, sizeof(reInitCodecConfig));
   reconfigureParams.reInitEncodeParams.encodeConfig = &reInitCodecConfig;
-
-  // update the reconfigure params
   reconfigureParams.reInitEncodeParams.encodeConfig->rcParams.averageBitRate = target_bitrate_;
   reconfigureParams.reInitEncodeParams.encodeConfig->rcParams.vbvBufferSize = 
           reconfigureParams.reInitEncodeParams.encodeConfig->rcParams.averageBitRate * 

@@ -16,7 +16,7 @@
 #include "NvCodecUtils.h"
 
 
-// simplelogger::Logger *logger = simplelogger::LoggerFactory::CreateConsoleLogger();
+simplelogger::Logger *logger = simplelogger::LoggerFactory::CreateConsoleLogger();
 
 void print_usage(const string & program_name)
 {
@@ -95,64 +95,76 @@ int main(int argc, char * argv[])
   const auto width = narrow_cast<uint16_t>(strict_stoi(argv[optind + 2]));
   const auto height = narrow_cast<uint16_t>(strict_stoi(argv[optind + 3]));
 
+  // create a datagram udp socket and connect to the sender
   Address peer_addr_video{host, port};
   UDPSocket video_sock;
   video_sock.connect(peer_addr_video);
-  LOG(LogLevel::INFO) << "Video session connected:" << peer_addr_video.str() << ":" << video_sock.local_address().str();
+  cerr << "Video stream connected:" << peer_addr_video.str() << ":" << video_sock.local_address().str() << endl;
 
   // create a RTCP socket and connect to the sender
   const auto signal_port = narrow_cast<uint16_t>(port + 1);
   UDPSocket signal_sock;
   Address peer_addr_signal{host, signal_port};
   signal_sock.connect(peer_addr_signal);
-  LOG(LogLevel::INFO)<< "Signal session connected" << peer_addr_signal.str() << ":" << signal_sock.local_address().str();
+  cerr << "Signal stream connected" << peer_addr_signal.str() << ":" << signal_sock.local_address().str() << endl;
 
+  // send INIT messages 
   const ConfigMsg init_config_msg(width, height, frame_rate, target_bitrate); 
   video_sock.send(init_config_msg.serialize_to_string());
-  LOG(LogLevel::INFO) <<  "init_config_msg sent";
+  cerr <<  "init_config_msg sent" << endl;
+
   const SignalMsg init_signal_msg(target_bitrate); 
   signal_sock.send(init_signal_msg.serialize_to_string());
-  LOG(LogLevel::INFO) <<  "init_signal_msg sent";
+  cerr <<  "init_signal_msg sent" << endl;
   
-  // Create the decoder
+  // initialize decoders
   TIHWDecoder decoder(width, height, lazy_level, output_path);
   decoder.set_verbose(verbose);
 
-  // main loop
+  // timer for sending signal messages
   const auto start_time = std::chrono::steady_clock::now();
   auto last_time = std::chrono::steady_clock::now();
-  while (true) {
 
+  // main loop
+  while (true) {
+    // parse a datagram received from sender
     FrameDatagram datagram;
     if (not datagram.parse_from_string(video_sock.recv().value())) {
       throw runtime_error("failed to parse a datagram");
     }
 
-    // Acknowledge the received datagram
+    // // print debugging message
+    // cerr << "Received datagram: frame_id=" << datagram.frame_id
+    //      << " frag_id=" << datagram.frag_id 
+    //      << " frag_cnt=" << datagram.frag_cnt << endl;
+
+    // send an ACK back to sender
     AckMsg ack(datagram);
     video_sock.send(ack.serialize_to_string());
+
     if (verbose) {
-      LOG(LogLevel::INFO) << "Acked datagram: frame_id=" << datagram.frame_id
+      cerr << "Acked datagram: frame_id=" << datagram.frame_id
            << " frag_id=" << datagram.frag_id << endl;
     }
 
+    // process the received datagram in the decoder
+    decoder.add_datagram(move(datagram)); // the parameter is a temporary object, so we need to move() it to avoid copying it. 
 
-    // Use move() to transfer ownership of dynamically allocated memory
-    // After the move operation, the state of datagram is valid but unspecified.
-    // Cannot make any assumptions about its content, but can assign a new value to it or destroy it safely.
-    decoder.add_datagram(move(datagram));
-
+    // check if the expected frame(s) is complete
     while (decoder.next_frame_complete()) {
       decoder.consume_next_frame();
     }
 
+    // send a new signal message every 1s
     if (std::chrono::steady_clock::now() - last_time > std::chrono::seconds(1)) {
-      // do something
+      // last_time = steady_clock::now();
+      // FeedbackMsg feedback_msg(0);
+      // signal_sock.send(feedback_msg.serialize_to_string());
     }
-    last_time = std::chrono::steady_clock::now();
 
+    // Streaming time up
     if (std::chrono::steady_clock::now() - start_time > std::chrono::seconds(total_stream_time)) {
-      LOG(LogLevel::INFO) << "Time's up!";
+      cerr << "Time's up!" << endl;
       break;
     }
   }

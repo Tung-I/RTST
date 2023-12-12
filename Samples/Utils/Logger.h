@@ -254,3 +254,6 @@ private:
 
 extern simplelogger::Logger *logger;
 #define LOG(level) simplelogger::LogTransaction(logger, level, __FILE__, __LINE__, __FUNCTION__).GetStream()
+
+// extern simplelogger::Logger *mylogger;
+// #define MYLOG(mylogger, level) simplelogger::LogTransaction(mylogger, level, __FILE__, __LINE__, __FUNCTION__).GetStream()

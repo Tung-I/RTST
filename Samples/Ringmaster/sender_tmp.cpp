@@ -22,6 +22,7 @@ namespace {
   constexpr unsigned int BILLION = 1000 * 1000 * 1000;
 }
 
+simplelogger::Logger *logger = simplelogger::LoggerFactory::CreateConsoleLogger();
 
 void print_usage(const std::string & program_name)
 {
@@ -36,6 +37,7 @@ void print_usage(const std::string & program_name)
 
 std::pair<Address, ConfigMsg> recv_config_msg(UDPSocket & udp_sock)
 {
+  // wait until a valid ConfigMsg is received
   while (true) {
     const auto & [peer_addr, raw_data] = udp_sock.recvfrom();
     const std::shared_ptr<Msg> msg = Msg::parse_from_string(raw_data.value());
@@ -68,6 +70,7 @@ std::pair<Address, SignalMsg> recv_signal_msg(UDPSocket & udp_sock)
 
 int main(int argc, char * argv[])
 {
+  // argument parsing
   std::string output_path;
   bool verbose = false;
 
@@ -110,59 +113,68 @@ int main(int argc, char * argv[])
   const std::string yuv_path = argv[optind + 1];
   UDPSocket video_sock;
   video_sock.bind({"0", video_port});
-  LOG(LogLevel::INFO) << "Binding address (data channel): " << video_sock.local_address().str();
+  std::cerr << "Local address: " << video_sock.local_address().str() << std::endl;
   UDPSocket signal_sock;
   signal_sock.bind({"0", signal_port});
-  LOG(LogLevel::INFO) << "Binding address (feedback channel) " << signal_sock.local_address().str();
+  std::cerr << "Local address: " << signal_sock.local_address().str() << std::endl;
 
+  // Ensure that the receiver is ready to receive the first datagram
+  std::cerr << "Waiting for receiver..." << std::endl;
   const auto & [peer_addr_video, init_config_msg] = recv_config_msg(video_sock); 
-  LOG(LogLevel::INFO) << "Client address (data channel):" << peer_addr_video.str();
+  std::cerr << "Video stream address: " << peer_addr_video.str() << std::endl;
   video_sock.connect(peer_addr_video);
   const auto & [peer_addr_signal, init_signal_msg] = recv_signal_msg(signal_sock); 
-  LOG(LogLevel::INFO) << "Client address (feedback channel):" << peer_addr_signal.str();
+  std::cerr << "Signal stream address: " << peer_addr_signal.str() << std::endl;
   signal_sock.connect(peer_addr_signal);
 
-  const auto width = init_config_msg.width;
-  const auto height = init_config_msg.height;
-  const auto frame_rate = init_config_msg.frame_rate;
-  const auto target_bitrate = init_config_msg.target_bitrate;
+  // read configuration from the peer
+  const auto init_width = init_config_msg.width;
+  const auto init_height = init_config_msg.height;
+  const auto init_frame_rate = init_config_msg.frame_rate;
+  const auto init_target_bitrate = init_config_msg.target_bitrate;
 
-  std::cerr << "Received config: width=" << std::to_string(width)
-       << " height=" << std::to_string(height)
-       << " FPS=" << std::to_string(frame_rate)
-       << " bitrate=" << std::to_string(target_bitrate) << std::endl;
+  // FoV
+  const auto viewport_width = 1024;
+  const auto viewport_height = 768;
 
-  // Set UDP socket to non-blocking now
+  std::cerr << "Received config: width=" << std::to_string(init_width)
+       << " height=" << std::to_string(init_height)
+       << " FPS=" << std::to_string(init_frame_rate)
+       << " bitrate=" << std::to_string(init_target_bitrate) << std::endl;
+
+  // set UDP socket to non-blocking now
   video_sock.set_blocking(false);
   signal_sock.set_blocking(false);
 
-  // Open the YUV video file
+  // open the video file
   const char * szInFilePath = yuv_path.c_str();
   std::ifstream fpIn(szInFilePath, std::ifstream::in | std::ifstream::binary);
   if (!fpIn)
   {
-      LOG(LogLevel::ERROR) << "Unable to open input file: " << szInFilePath;
+      std::cout << "Unable to open input file: " << szInFilePath << std::endl;
       return EXIT_FAILURE;
   }
 
-  // Create the encoder
-  TIHWEncoder encoder(width, height, frame_rate, output_path);
-  encoder.set_target_bitrate(target_bitrate);
+
+  // initialize the encoder
+  TIHWEncoder encoder(init_width, init_height, init_frame_rate, output_path);
+  encoder.set_target_bitrate(init_target_bitrate);
   encoder.set_verbose(verbose);
 
-  // Allocate a host frame container
+  // allocate a host frame container
   int nHostFrameSize = encoder.penc->GetFrameSize(); 
   std::unique_ptr<uint8_t[]> pHostFrame(new uint8_t[nHostFrameSize]); 
 
-  // Create a periodic timer
+  // create a periodic timer
   Poller poller;
   Timerfd fps_timer;
-  const timespec frame_interval {0, static_cast<long>(BILLION / frame_rate)}; // {sec, nsec}
+  const timespec frame_interval {0, static_cast<long>(BILLION / init_frame_rate)}; // {sec, nsec}
   fps_timer.set_time(frame_interval, frame_interval); // {initial expiration, interval}
 
-
-  // Call Encoder at periodic time intervals,
+  // streamsize
   std::streamsize nRead = 0;
+
+  // when the periodic timer fires
   poller.register_event(fps_timer, Poller::In,
     [&]()
     {
@@ -180,9 +192,12 @@ int main(int argc, char * argv[])
           fpIn.clear();
           fpIn.seekg(0, std::ios::beg);
           nRead = fpIn.read(reinterpret_cast<char*>(pHostFrame.get()), nHostFrameSize).gcount();
+          // std::cout << "Reach the end of the video file." << std::endl;
+          // exit(0);
         }    
       }
 
+      // compress 'raw_img' into frame 'frame_id' and packetize it
       encoder.compress_frame(pHostFrame);
 
       // interested in socket being writable if there are datagrams to send
@@ -192,7 +207,7 @@ int main(int argc, char * argv[])
     }
   );
 
-  // Call whenever there are datagrams to send
+  // when the video socket is writable
   poller.register_event(video_sock, Poller::Out,
     [&]()
     {
@@ -200,59 +215,65 @@ int main(int argc, char * argv[])
 
       while (not send_buf.empty()) {
         auto & datagram = send_buf.front();
-        datagram.send_ts = timestamp_us(); // timestamp the sending time before sending
+
+        // timestamp the sending time before sending
+        datagram.send_ts = timestamp_us();
 
         if (video_sock.send(datagram.serialize_to_string())) {
           if (verbose) {
-            LOG(LogLevel::INFO) << "Sent datagram: frame_id=" << datagram.frame_id
+            std::cerr << "Sent datagram: frame_id=" << datagram.frame_id
                  << " frag_id=" << datagram.frag_id
                  << " frag_cnt=" << datagram.frag_cnt
                  << " rtx=" << datagram.num_rtx << std::endl;
           }
 
-          // Mark as unacked if not a retransmission
+          // move the sent datagram to unacked if not a retransmission
           if (datagram.num_rtx == 0) {
             encoder.add_unacked(std::move(datagram));
           }
 
           send_buf.pop_front();
-
         } else { // EWOULDBLOCK; try again later
           datagram.send_ts = 0; // since it wasn't sent successfully
           break;
         }
       }
 
-      if (send_buf.empty()) {  // Not interested in socket event if no datagrams to send
+      // not interested in socket being writable if no datagrams to send
+      if (send_buf.empty()) {
         poller.deactivate(video_sock, Poller::Out);
       }
     }
   );
 
-  // Call whenever the data socket is readable
+  // when the video socket is readable
   poller.register_event(video_sock, Poller::In,
     [&]()
     {
       while (true) {
         const auto & raw_data = video_sock.recv();
+
         if (not raw_data) { // EWOULDBLOCK; try again when data is available
           break;
         }
         const std::shared_ptr<Msg> msg = Msg::parse_from_string(*raw_data);
-        if (msg == nullptr or msg->type != Msg::Type::ACK) {  // ignore invalid or non-ACK messages
+
+        // ignore invalid or non-ACK messages
+        if (msg == nullptr or msg->type != Msg::Type::ACK) {
           return;
         }
 
         const auto ack = dynamic_pointer_cast<AckMsg>(msg);
 
         if (verbose) {
-          LOG(LogLevel::INFO) << "Received ACK: frame_id=" << ack->frame_id
-               << " frag_id=" << ack->frag_id;
+          std::cerr << "Received ACK: frame_id=" << ack->frame_id
+               << " frag_id=" << ack->frag_id << std::endl;
         }
 
-        encoder.handle_ack(ack);  // RTT estimation, retransmission, etc.
+        // RTT estimation, retransmission, etc.
+        encoder.handle_ack(ack);
 
-        // Flush the send buffer
+        // send_buf might contain datagrams to be retransmitted now
         if (not encoder.send_buf().empty()) {
           poller.activate(video_sock, Poller::Out);
         }
@@ -260,7 +281,7 @@ int main(int argc, char * argv[])
     }
   );
 
-  // output Enc stats every second
+  // create a periodic timer for outputting stats every second
   Timerfd stats_timer;
   const timespec stats_interval {1, 0};
   stats_timer.set_time(stats_interval, stats_interval);
@@ -270,11 +291,12 @@ int main(int argc, char * argv[])
       if (stats_timer.read_expirations() == 0) {
         return;
       }
+      // output stats every second
       encoder.output_periodic_stats();
     }
   );
 
-  // Call whenever the signal socket is readable
+  // when the signal socket is readable
   poller.register_event(signal_sock, Poller::In, 
     [&]() 
     {
@@ -286,15 +308,18 @@ int main(int argc, char * argv[])
         }
         const std::shared_ptr<Msg> sig_msg = Msg::parse_from_string(*raw_data);
 
+        // handle the signal message
        if (sig_msg->type == Msg::Type::SIGNAL) {
           const auto signal = dynamic_pointer_cast<SignalMsg>(sig_msg);
-          // Parse the signal message
+          
           std::cerr << "Received signal: bitrate=" << signal->target_bitrate
                << std::endl;
           
-          // Update the encoder configuration
+          // update the encoder's configuration
+    
           encoder.set_target_bitrate(signal->target_bitrate);
         }
+        // ignore invalid messages
         return;
       }
     }

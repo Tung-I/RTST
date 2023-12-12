@@ -10,6 +10,7 @@
 #include "image.hh"
 #include "timestamp.hh"
 
+
 Frame::Frame(const uint32_t frame_id,
              const FrameType frame_type,
              const uint16_t frag_cnt)
@@ -175,7 +176,7 @@ bool TIHWDecoder::next_frame_complete()
       const auto frame_diff = frame_id - next_frame_;
       advance_next_frame(frame_diff);
 
-      cerr << "* Recovery: skipped " << frame_diff
+      LOG(LogLevel::WARNING) << endl << "* Recovery: skipped " << frame_diff
            << " frames ahead to key frame " << frame_id << endl;
 
       return true;
@@ -199,15 +200,14 @@ void TIHWDecoder::consume_next_frame()
   // output stats 
   const auto stats_now = std::chrono::steady_clock::now();
   while (stats_now >= last_stats_time_ + 1s) {
-    cerr << "Decodable frames in the last ~1s: "
-         << num_decodable_frames_ << endl;
+    LOG(LogLevel::INFO) << "Decodable frames in the last ~1s: "
+         << num_decodable_frames_;
 
     const double diff_ms = std::chrono::duration<double, milli>(
                            stats_now - last_stats_time_).count();
     if (diff_ms > 0) {
-      cerr << "  - Bitrate (kbps): "
-           << double_to_string(total_decodable_frame_size_ * 8 / diff_ms)
-           << endl;
+      LOG(LogLevel::INFO) << "  - Bitrate (kbps): "
+           << double_to_string(total_decodable_frame_size_ * 8 / diff_ms);
     }
 
     // reset stats
@@ -384,21 +384,12 @@ void TIHWDecoder::display_decoded_frame(VideoDisplay & display)
       throw runtime_error("Multiple frames were decoded at once");
     }
 
-    const auto ts_before_display = std::chrono::steady_clock::now();
-
     NV12Image * pNV12_image = new NV12Image(display_width_, display_height_);
     pFrame = pdec->GetFrame();
     // int frame_size = pdec->GetFrameSize();
     pNV12_image->store_nv12_frame(pFrame, pdec->GetFrameSize());
     // construct a temporary RawImage that does not own the raw_img
     display.show_frame(*pNV12_image);
-
-    const auto ts_after_display = std::chrono::steady_clock::now();
-      const double diff_ms = std::chrono::duration<double, milli>(
-                           ts_after_display - ts_before_display).count();
-    std::cout << "store and display latency: " << diff_ms << std::endl;
-
-    
     
     nFrameToDisplay_--;
   }
@@ -509,10 +500,10 @@ void TIHWDecoder::worker_main()
       const auto stats_now = std::chrono::steady_clock::now();
       while (stats_now >= last_stats_time + 1s) {  
         if (num_decoded_frames > 0) {
-          cerr << "[worker] Avg/Max decoding time (ms) of "
+          LOG(LogLevel::INFO) << "Avg/Max decoding time (ms) of "
                << num_decoded_frames << " frames: "
                << double_to_string(total_decode_time_ms / num_decoded_frames)
-               << "/" << double_to_string(max_decode_time_ms) << endl;
+               << "/" << double_to_string(max_decode_time_ms);
         }
 
         // reset stats
