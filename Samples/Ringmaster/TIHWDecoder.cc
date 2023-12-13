@@ -426,7 +426,9 @@ void TIHWDecoder::worker_main()
   ck(cuCtxCreate(&cuContext, 0, cuDevice));
   // bool force_zero_latency = true;
   bool force_zero_latency = false;
-  pdec = new NvDecoder(cuContext, eOutputFormat != native, cudaVideoCodec_HEVC, 
+  // pdec = new NvDecoder(cuContext, eOutputFormat != native, cudaVideoCodec_HEVC, 
+  //   true, false, NULL, NULL, false, 0, 0, 1000, force_zero_latency);
+  pdec = new NvDecoder(cuContext, eOutputFormat != native, cudaVideoCodec_H264, 
     true, false, NULL, NULL, false, 0, 0, 1000, force_zero_latency);
 
   // // initialize display frame

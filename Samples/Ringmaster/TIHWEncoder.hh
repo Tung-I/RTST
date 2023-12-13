@@ -104,6 +104,10 @@ private:
   // config
   NV_ENC_CONFIG encodeConfig = { NV_ENC_CONFIG_VER };
   NV_ENC_CONFIG reInitCodecConfig = { NV_ENC_CONFIG_VER };
+
+  // QP
+  int8_t* qpDeltaMapArray;
+  int qpDeltaMapArraySize;
   
   // container
   std::vector<std::vector<uint8_t>> vPacket; 

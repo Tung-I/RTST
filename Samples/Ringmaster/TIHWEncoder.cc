@@ -43,7 +43,8 @@ TIHWEncoder::TIHWEncoder(const uint16_t nWidth,
   ValidateResolution(nWidth, nHeight);
 
   // Initialize enc parameters
-  string used_codec = "hevc";
+  string used_codec = "h264";
+  // string used_codec = "hevc";
   std::string CommandLineParam = "-codec " + used_codec + " -fps " + std::to_string(frame_rate_);
   EncodeCLIOptions = NvEncoderInitParam(CommandLineParam.c_str(), NULL);
   NvEncoderInitParam *pEncodeCLIOptions = &EncodeCLIOptions; 
@@ -82,6 +83,10 @@ TIHWEncoder::TIHWEncoder(const uint16_t nWidth,
   // encodeConfig->encodeCodecConfig.hevcConfig.hevcVUIParameters.colourDescriptionPresentFlag = 1;
   // encodeConfig->encodeCodecConfig.hevcConfig.hevcVUIParameters.colourMatrix = NV_ENC_VUI_MATRIX_COEFFS_FCC;
 
+  encodeConfig.encodeCodecConfig.h264Config.h264VUIParameters.videoSignalTypePresentFlag = 1;
+  encodeConfig.encodeCodecConfig.h264Config.h264VUIParameters.colourDescriptionPresentFlag = 1;
+  encodeConfig.encodeCodecConfig.h264Config.h264VUIParameters.colourMatrix = NV_ENC_VUI_MATRIX_COEFFS_FCC;
+
   if (pEncodeCLIOptions->IsCodecH264()){
     encodeConfig.encodeCodecConfig.h264Config.idrPeriod = NVENC_INFINITE_GOPLENGTH;
   }else if (pEncodeCLIOptions->IsCodecHEVC()){
@@ -99,7 +104,29 @@ TIHWEncoder::TIHWEncoder(const uint16_t nWidth,
   encodeConfig.rcParams.maxBitRate = encodeConfig.rcParams.averageBitRate;
   encodeConfig.rcParams.vbvInitialDelay = encodeConfig.rcParams.vbvBufferSize;
 
+  // 
+  if (!penc->GetCapabilityValue(NV_ENC_CODEC_H264_GUID, NV_ENC_CAPS_SUPPORT_EMPHASIS_LEVEL_MAP)){
+    LOG(LogLevel::INFO) << "Encoder does not support emphasis level map";
+  }
+  else{
+    LOG(LogLevel::INFO) << "Enable emphasis level map";
+    int widthInMacroblocks = nWidth_ / 16;
+    int heightInMacroblocks = nHeight_ / 16;
+    qpDeltaMapArraySize = widthInMacroblocks * heightInMacroblocks;
 
+    qpDeltaMapArray = (int8_t*)malloc(qpDeltaMapArraySize * sizeof(int8_t));
+    memset(qpDeltaMapArray, 0, qpDeltaMapArraySize);
+
+    for (int i = 0; i < qpDeltaMapArraySize; i++) {
+        if (i < qpDeltaMapArraySize / 2) {
+            qpDeltaMapArray[i] = NV_ENC_EMPHASIS_MAP_LEVEL_5; 
+        } else {
+            qpDeltaMapArray[i] = NV_ENC_EMPHASIS_MAP_LEVEL_1;
+        }
+    }
+    encodeConfig.rcParams.qpMapMode = NV_ENC_QP_MAP_EMPHASIS;
+  }
+  
 
   pEncodeCLIOptions->SetInitParams(&initializeParams, eInputFormat);
   penc->CreateEncoder(&initializeParams);
@@ -118,37 +145,34 @@ TIHWEncoder::~TIHWEncoder()
 
 void TIHWEncoder::compress_frame(const std::unique_ptr<uint8_t[]>& pHostFrame)
 {
-
   const auto frame_generation_ts = timestamp_us();
 
+  
   curr_frame_type_ = FrameType::NONKEY;
   encode_frame(pHostFrame);
 
   const size_t frame_size = packetize_encoded_frame(
     vPacket, nWidth_, nHeight_);
 
-  // output frame information
+  // Write logging info
   if (output_fd_) {
     const auto frame_encoded_ts = timestamp_us();
     const double encode_time_ms = (frame_encoded_ts - frame_generation_ts) / 1000.0;
-
     output_fd_->write(to_string(frame_id_) + "," +
                       to_string(target_bitrate_) + "," +
                       to_string(frame_size) + "," + 
                       to_string(encode_time_ms) + "," + 
                       double_to_string(*ewma_rtt_us_ / 1000.0) + "\n"); // ms
   }
-
-  // // move onto the next frame
-  // frame_id_++;
 }
 
 void TIHWEncoder::encode_frame(const std::unique_ptr<uint8_t[]>& pHostFrame)
 {
-   picParams.encodePicFlags = 0;
-   curr_frame_type_ = FrameType::UNKNOWN;
 
-  // clean up if we've given up on retransmissions
+  picParams.encodePicFlags = 0;
+  curr_frame_type_ = FrameType::UNKNOWN;
+
+  // Clean up if we've given up on retransmissions
   if (not unacked_.empty()) {
     const auto & first_unacked = unacked_.cbegin()->second;
     const auto us_since_first_send = timestamp_us() - first_unacked.send_ts;
@@ -189,6 +213,12 @@ void TIHWEncoder::encode_frame(const std::unique_ptr<uint8_t[]>& pHostFrame)
   );
 
   // encode it into vPacket
+
+  ///////////////////////////////////////////////////////////
+
+  picParams.qpDeltaMapSize = qpDeltaMapArraySize;
+  picParams.qpDeltaMap = qpDeltaMapArray;
+  ///////////////////////////////////////////////////////////
   const auto encode_start = std::chrono::steady_clock::now();
   penc->EncodeFrame(vPacket, &picParams);
   const auto encode_end = std::chrono::steady_clock::now();
