@@ -29,12 +29,12 @@
 #include "protocol.hh"
 #include "file_descriptor.hh" 
 
-#include "EncMultiInstance.h"
 
 enum OutputFormat
 {
     native = 0, bgra, bgra64
 };
+
 
 class TIHWEncoder
 {
@@ -105,21 +105,8 @@ private:
   
   // container
   std::vector<std::vector<uint8_t>> vPacket; 
+  int nFrameSize = 0;
   /////////////////////////////////////////
-
-  int nThread = 1;
-  uint64_t numFramesPerVideoPortion = 10;
-  // std::vector<ThreadData> vidEncThreads(nThread);
-  // std::vector<IOEncoderMem> ioVideoMem(nThread);
-  std::vector<ThreadData> vidEncThreads;
-  std::vector<IOEncoderMem> ioVideoMem;
-  std::vector<ConcurrentQueue<encodeData>> encodeQueue;
-  encodeData outputEncodeData;
-  EncodedFrameData outputFrameData;
-  
-
-  /////////////////////////////////////////
-  
   
   
   FrameType curr_frame_type_ {FrameType::NONKEY};
@@ -161,12 +148,6 @@ private:
 
   // packetize the just encoded frame (stored in context_) and return its size
   size_t packetize_encoded_frame(std::vector<std::vector<uint8_t>> &vPacket, uint16_t width, uint16_t height);
-
-  inline void gatherEncodedData(std::vector<uint8_t>& encOutBuf, 
-  uint8_t* hostOutVidBuf, uint64_t &totalBitStreamSize, std::vector<EncodedFrameData>& hostEncodedData);
-
-  void asyncEncode(ConcurrentQueue<encodeData>& encodeQueue, std::atomic<bool>& encoderWorking, 
-    const std::unique_ptr<uint8_t[]>& pHostFrame);
 
 };
 

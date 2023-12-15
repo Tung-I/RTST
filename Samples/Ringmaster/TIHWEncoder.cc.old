@@ -31,9 +31,9 @@ TIHWEncoder::TIHWEncoder(const uint16_t nWidth,
                  const uint16_t nHeight,
                  const uint16_t frame_rate,
                  const string & output_path)
-  : nWidth_(nWidth), nHeight_(nHeight), frame_rate_(frame_rate), output_fd_(),
-  vidEncThreads(nThread), ioVideoMem(nThread), encodeQueue(nThread)
-  {
+  : nWidth_(nWidth), nHeight_(nHeight),
+    frame_rate_(frame_rate), output_fd_()
+    {
   
   if (not output_path.empty()) {  // for logging
     output_fd_ = FileDescriptor(check_syscall(
@@ -42,6 +42,7 @@ TIHWEncoder::TIHWEncoder(const uint16_t nWidth,
 
   ValidateResolution(nWidth, nHeight);
 
+  // Initialize enc parameters
   // string used_codec = "h264";
   string used_codec = "hevc";
   std::string CommandLineParam = "-codec " + used_codec + " -fps " + std::to_string(frame_rate_);
@@ -66,54 +67,106 @@ TIHWEncoder::TIHWEncoder(const uint16_t nWidth,
   // Create nvenc cuda interface
   ck(cuCtxCreate(&cuContext, 0, cuDevice));  
   penc = new NvEncoderCuda(cuContext, nWidth, nHeight, eInputFormat, 3, false, false, false);
+   
+
   // Set the config and initialize params
   initializeParams.encodeConfig = &encodeConfig; 
   penc->CreateDefaultEncoderParams(&initializeParams, pEncodeCLIOptions->GetEncodeGUID(), 
       pEncodeCLIOptions->GetPresetGUID(), pEncodeCLIOptions->GetTuningInfo());
 
-  // Create and initialize array of data required for each encoding session thread 
-  ck(cuCtxCreate(&(cuContext), CU_CTX_SCHED_BLOCKING_SYNC, cuDevice)); // Create single CUDA context
-  for (int i = 0; i < nThread; i++) {
-    vidEncThreads[i].cuContext = &cuContext; // same CUDA context for every encoding session thread
-    // safely cast nWidth to uint32_t
+  encodeConfig.gopLength = NVENC_INFINITE_GOPLENGTH;
+  // encodeConfig.gopLength = 30;
+  encodeConfig.rcParams.disableIadapt = 1;  // disable adaptive insertion of intra frames and B frames
+  encodeConfig.rcParams.disableBadapt = 1;
+  initializeParams.enablePTD == 1;  // the decision of determining the picture type will be taken by NVENCODE API
 
-    vidEncThreads[i].encSession = make_unique<NvEncoderCuda>(cuContext, 
-      static_cast<int32_t>(nWidth), static_cast<int32_t>(nHeight), eInputFormat);
-    vidEncThreads[i].encSession->CreateDefaultEncoderParams(&initializeParams, 
-      pEncodeCLIOptions->GetEncodeGUID(), pEncodeCLIOptions->GetPresetGUID(), pEncodeCLIOptions->GetTuningInfo());
-    
-    
-    initializeParams.enablePTD == 1;  // to be debugged
-    encodeConfig.gopLength = NVENC_INFINITE_GOPLENGTH;
-    encodeConfig.rcParams.disableIadapt = 1;  
-    encodeConfig.rcParams.disableBadapt = 1;
+
+  if (pEncodeCLIOptions->IsCodecH264()){
+    encodeConfig.encodeCodecConfig.h264Config.h264VUIParameters.videoSignalTypePresentFlag = 1;
+    encodeConfig.encodeCodecConfig.h264Config.h264VUIParameters.colourDescriptionPresentFlag = 1;
+    encodeConfig.encodeCodecConfig.h264Config.h264VUIParameters.colourMatrix = NV_ENC_VUI_MATRIX_COEFFS_FCC;
+  }else{
+    encodeConfig.encodeCodecConfig.hevcConfig.hevcVUIParameters.videoSignalTypePresentFlag = 1;
+    encodeConfig.encodeCodecConfig.hevcConfig.hevcVUIParameters.colourDescriptionPresentFlag = 1;
+    encodeConfig.encodeCodecConfig.hevcConfig.hevcVUIParameters.colourMatrix = NV_ENC_VUI_MATRIX_COEFFS_FCC;
 
     // encodeConfig.encodeCodecConfig.hevcConfig.enableIntraRefresh = 1;
     // encodeConfig.encodeCodecConfig.hevcConfig.intraRefreshCnt = 5;
     // encodeConfig.encodeCodecConfig.hevcConfig.intraRefreshPeriod = 30;
-    encodeConfig.encodeCodecConfig.hevcConfig.hevcVUIParameters.videoSignalTypePresentFlag = 1;
-    encodeConfig.encodeCodecConfig.hevcConfig.hevcVUIParameters.colourDescriptionPresentFlag = 1;
-    encodeConfig.encodeCodecConfig.hevcConfig.hevcVUIParameters.colourMatrix = NV_ENC_VUI_MATRIX_COEFFS_FCC;
+  }
+  if (pEncodeCLIOptions->IsCodecH264()){
+    encodeConfig.encodeCodecConfig.h264Config.idrPeriod = NVENC_INFINITE_GOPLENGTH;
+  }else if (pEncodeCLIOptions->IsCodecHEVC()){
     encodeConfig.encodeCodecConfig.hevcConfig.idrPeriod = NVENC_INFINITE_GOPLENGTH;
-    encodeConfig.rcParams.rateControlMode = NV_ENC_PARAMS_RC_CBR;
-    encodeConfig.rcParams.multiPass = NV_ENC_MULTI_PASS_DISABLED;
-    
-
-    pEncodeCLIOptions->SetInitParams(&initializeParams, eInputFormat);
-    vidEncThreads[i].encSession->CreateEncoder(&initializeParams);
-    vidEncThreads[i].cuStream.reset(new NvCUStream(cuContext, 1, vidEncThreads[i].encSession)); // each encoding session thread is going to use one cuda stream
-  }
-
-  // Allocate all the required memory for IO 
-  uint64_t frameSize = vidEncThreads[0].encSession->GetFrameSize();
-  uint64_t sizePerVideoPortion = numFramesPerVideoPortion * frameSize;
+  }else{
+		encodeConfig.encodeCodecConfig.av1Config.idrPeriod = NVENC_INFINITE_GOPLENGTH;
+	}
   
-  for (int i = 0; i < nThread; i++) {
-    ioVideoMem[i].hostInBuf.readyToEdit = true;
-    ck(cuMemAllocHost((void**)&ioVideoMem[i].hostInBuf.data, frameSize)); // Allocate pinned memory for input RAW frame
-    ioVideoMem[i].hostOutBuf.readyToEdit = true;
-    ck(cuMemAllocHost((void**)&ioVideoMem[i].hostOutBuf.data, sizePerVideoPortion)); // Allocate pinned memory for output compressed video portions
+  encodeConfig.rcParams.rateControlMode = NV_ENC_PARAMS_RC_CBR;
+  encodeConfig.rcParams.multiPass = NV_ENC_MULTI_PASS_DISABLED;
+  encodeConfig.rcParams.averageBitRate = 
+    (static_cast<unsigned int>(5.0f * initializeParams.encodeWidth * initializeParams.encodeHeight) / (1280 * 720)) * 100000;
+  encodeConfig.rcParams.vbvBufferSize =  // 5-frame length
+    (encodeConfig.rcParams.averageBitRate * initializeParams.frameRateDen / initializeParams.frameRateNum) * 5; 
+  encodeConfig.rcParams.maxBitRate = encodeConfig.rcParams.averageBitRate;
+  encodeConfig.rcParams.vbvInitialDelay = encodeConfig.rcParams.vbvBufferSize;
+
+  // 
+  if (!penc->GetCapabilityValue(pEncodeCLIOptions->GetEncodeGUID(), NV_ENC_CAPS_SUPPORT_EMPHASIS_LEVEL_MAP)){
+    LOG(LogLevel::INFO) << "Encoder does not support emphasis level map; use delta map instead";
+    
+    encodeConfig.rcParams.qpMapMode = NV_ENC_QP_MAP_DISABLED;
+    qpDeltaMapArraySize = 0;
+    qpDeltaMapArray = NULL;
+    
+    // encodeConfig.rcParams.qpMapMode = NV_ENC_QP_MAP_DELTA;
+    // int widthInMacroblocks = nWidth_ / 32;
+    // int heightInMacroblocks = nHeight_ / 32;
+    // qpDeltaMapArraySize = widthInMacroblocks * heightInMacroblocks;
+
+    // qpDeltaMapArray = (int8_t*)malloc(qpDeltaMapArraySize * sizeof(int8_t));
+    // memset(qpDeltaMapArray, 0, qpDeltaMapArraySize);
+
+    // for (int y = 0; y < heightInMacroblocks; y++) {
+    //   for (int x = 0; x < widthInMacroblocks; x++) {
+    //       int index = y * widthInMacroblocks + x;
+    //       // if (x > widthInMacroblocks / 2 && y > heightInMacroblocks / 2){
+    //       if (x < widthInMacroblocks / 2 ){
+    //           qpDeltaMapArray[index] = NV_ENC_EMPHASIS_MAP_LEVEL_5; 
+    //       } else {
+    //           qpDeltaMapArray[index] = NV_ENC_EMPHASIS_MAP_LEVEL_0;
+    //       }
+    //   }
+    // }
   }
+  else{
+    LOG(LogLevel::INFO) << "Enable emphasis level map";
+    encodeConfig.rcParams.qpMapMode = NV_ENC_QP_MAP_EMPHASIS;
+
+    int widthInMacroblocks = nWidth_ / 16;
+    int heightInMacroblocks = nHeight_ / 16;
+    qpDeltaMapArraySize = widthInMacroblocks * heightInMacroblocks;
+
+    qpDeltaMapArray = (int8_t*)malloc(qpDeltaMapArraySize * sizeof(int8_t));
+    memset(qpDeltaMapArray, 0, qpDeltaMapArraySize);
+
+    for (int i = 0; i < qpDeltaMapArraySize; i++) {
+        if (i < qpDeltaMapArraySize / 2) {
+            qpDeltaMapArray[i] = NV_ENC_EMPHASIS_MAP_LEVEL_0; 
+        } else {
+            qpDeltaMapArray[i] = NV_ENC_EMPHASIS_MAP_LEVEL_5;
+        }
+    }
+  }
+  
+
+  pEncodeCLIOptions->SetInitParams(&initializeParams, eInputFormat);
+  penc->CreateEncoder(&initializeParams);
+
+  // Params for one frame
+  picParams.encodePicFlags = 0;
+  std::streamsize  nRead = 0;
+  nFrameSize = penc->GetFrameSize();  
   
 }
 
@@ -175,53 +228,31 @@ void TIHWEncoder::encode_frame(const std::unique_ptr<uint8_t[]>& pHostFrame)
     }
   }
 
+  // copy host frame into the encoder input buffer
+  const NvEncInputFrame* encoderInputFrame = penc->GetNextInputFrame();  // pointer to the next input buffer
+
+  NvEncoderCuda::CopyToDeviceFrame(cuContext,
+      pHostFrame.get(),
+      0,
+      (CUdeviceptr)encoderInputFrame->inputPtr,
+      (int)encoderInputFrame->pitch,
+      penc->GetEncodeWidth(),
+      penc->GetEncodeHeight(),
+      CU_MEMORYTYPE_HOST,
+      encoderInputFrame->bufferFormat,
+      encoderInputFrame->chromaOffsets,
+      encoderInputFrame->numChromaPlanes
+  );
+
+  // encode it into vPacket
+
+  // ///////////////////////////////////////////////////////////
+  // picParams.qpDeltaMapSize = qpDeltaMapArraySize;
+  // picParams.qpDeltaMap = qpDeltaMapArray;
+  ///////////////////////////////////////////////////////////
+
   const auto encode_start = std::chrono::steady_clock::now();
-
-  /////////////////////////////////////////////////////////////////////
-  // Create encode work queues
-  for (int i = 0; i < nThread; i++){
-    // video ENCODING thread work queue generation
-    encodeData currEncData;
-    currEncData.offset = 0;
-    currEncData.numFrames = 1;
-    currEncData.threadData = &vidEncThreads[i];
-    currEncData.vidPortionNum = 0;
-    currEncData.vidThreadIdx = i;
-    currEncData.ioVideoMem = &ioVideoMem[i];
-    currEncData.isLast = 0; // check if last to end thread
-    currEncData.isSingleThread = (nThread == 1);
-    encodeQueue[i].push_back(currEncData); // queue encode work
-  }
-
-  // Launch encoding threads 
-  try
-	{
-    std::atomic<bool> encoderWorking(true);
-    std::vector<std::thread> encodeThread(nThread);
-    for (int i = 0; i < nThread; i++)
-      encodeThread[i] = std::thread(&TIHWEncoder::asyncEncode, this, 
-        std::ref(encodeQueue[i]), std::ref(encoderWorking), std::ref(pHostFrame));
-
-    StopWatch processingTime;
-    processingTime.Start();
-    for (int i = 0; i < nThread; i++) encodeThread[i].join();
-    double pT = processingTime.Stop();
-  }
-  catch (const std::exception &ex)
-	{
-		std::cout << ex.what();
-	}
-
-  // TODO: make a decision on which thread's output to acquire
-  outputEncodeData = encodeQueue[0].pop_front();
-  std::cout << outputEncodeData.ioVideoMem->hostEncodedData.size() << endl;
-  // raise an exception if the output is empty
-  throw runtime_error("stop here");
-
-  // std::memcpy(vPacket[0].data(), outputEncodeData.ioVideoMem->hostOutBuf.data, 
-  //   outputEncodeData.ioVideoMem->hostOutBuf.size);
-  /////////////////////////////////////////////////////////////////////
-
+  penc->EncodeFrame(vPacket, &picParams);
   const auto encode_end = std::chrono::steady_clock::now();
   const double encode_time_ms = std::chrono::duration<double, milli>(encode_end - encode_start).count();
 
@@ -231,68 +262,12 @@ void TIHWEncoder::encode_frame(const std::unique_ptr<uint8_t[]>& pHostFrame)
   max_encode_time_ms_ = max(max_encode_time_ms_, encode_time_ms);
 }
 
-void TIHWEncoder::asyncEncode(ConcurrentQueue<encodeData>& encodeQueue, std::atomic<bool>& encoderWorking, 
-  const std::unique_ptr<uint8_t[]>& pHostFrame)
-{
-  encodeData enc;
-	while (encoderWorking) {
-    enc = encodeQueue.pop_front();
-    safeBuffer* inSafeBuf = &enc.ioVideoMem->hostInBuf;
-		safeBuffer* outSafeBuf = &enc.ioVideoMem->hostOutBuf;
-    std::unique_lock<std::mutex> outLock{ outSafeBuf->mutex };
-    while (!outSafeBuf->readyToEdit) {
-      outSafeBuf->condVarReady.wait(outLock); // wait until OUTPUT buffer is ready to be EDITED
-    }
-    enc.ioVideoMem->hostEncodedData.clear(); // clear last ouput data
-		uint64_t nFrameSize = enc.threadData->encSession->GetFrameSize();
-    uint64_t totalBitStreamSize = 0; // need to keep track of the size of each compressed frame
-		ck(cuCtxSetCurrent((CUcontext)enc.threadData->encSession->GetDevice()));
-    std::vector<std::vector<uint8_t>> encOutBuf;
-    NV_ENC_PIC_PARAMS nvEncPicParams = { NV_ENC_PIC_PARAMS_VER };
-
-    if (frame_id_ == 0) nvEncPicParams.encodePicFlags = NV_ENC_PIC_FLAG_FORCEIDR; // force IDR frame
-
-    for (uint32_t i = 0; i < enc.numFrames; i++){
-      ck(cuStreamSynchronize(enc.threadData->cuStream->GetInputCUStream())); // make sure the last memcpy is complete
-      const NvEncInputFrame* encoderInputFrame = enc.threadData->encSession->GetNextInputFrame();
-
-      // copy the data in pHostFrame, which is a std::unique_ptr<uint8_t[]>, into inSafeBuf->data
-      std::memcpy(inSafeBuf->data, pHostFrame.get(), nFrameSize); 
-      // do async frame copy from host to device
-      NvEncoderCuda::CopyToDeviceFrame((CUcontext)enc.threadData->encSession->GetDevice(),
-        (uint8_t*)inSafeBuf->data,
-        0,
-        (CUdeviceptr)encoderInputFrame->inputPtr,
-        encoderInputFrame->pitch,
-        enc.threadData->encSession->GetEncodeWidth(),
-        enc.threadData->encSession->GetEncodeHeight(),
-        CU_MEMORYTYPE_HOST,
-        encoderInputFrame->bufferFormat,
-        encoderInputFrame->chromaOffsets,
-        encoderInputFrame->numChromaPlanes,
-        false,
-        enc.threadData->cuStream->GetInputCUStream()
-      ); 
-
-      enc.threadData->encSession->EncodeFrame(encOutBuf, &nvEncPicParams);
-      for (uint32_t j = 0; j < encOutBuf.size(); ++j) { // gather encoded data in output buffer
-        gatherEncodedData(encOutBuf[j], outSafeBuf->data, totalBitStreamSize, enc.ioVideoMem->hostEncodedData);
-      }
-    }
-
-    outSafeBuf->readyToEdit = false; // OUTPUT buffer is ready to be READ
-		outSafeBuf->condVarReady.notify_all();
-    encoderWorking = false;
-		break;
-  }
-
-
-}
-
-
 size_t TIHWEncoder::packetize_encoded_frame(std::vector<std::vector<uint8_t>> &vPacket, uint16_t width, uint16_t height)
 {
-  if (vPacket.empty()) return 0;
+  if (vPacket.empty()) {
+    return 0;
+  }
+
   size_t frame_size = 0;  //bytes
   
   auto frame_type  = curr_frame_type_;
@@ -309,6 +284,9 @@ size_t TIHWEncoder::packetize_encoded_frame(std::vector<std::vector<uint8_t>> &v
       continue;
     }
     frag_cnt += (packet.size() + FrameDatagram::max_payload - 1) / FrameDatagram::max_payload;
+    // frag_cnt += narrow_cast<uint16_t>(
+    //   packet.size() / (FrameDatagram::max_payload + 1) + 1);
+      
   }
   
   // packetize the encoded frame
@@ -329,6 +307,13 @@ size_t TIHWEncoder::packetize_encoded_frame(std::vector<std::vector<uint8_t>> &v
       processed += payload_size;
     }
   }
+
+
+  // std::cout << "frame ID: " << frame_id_ << std::endl;
+  // std::cout << "frame size: " << frame_size << std::endl;
+  // std::cout << "vPacket size: " << vPacket.size() << std::endl;
+  // std::cout << "frag_cnt: " << frag_cnt << std::endl;
+
 
   frame_id_++;
   return frame_size;
@@ -453,19 +438,5 @@ void TIHWEncoder::set_target_bitrate(const unsigned int bitrate_kbps)
   reconfigureParams.reInitEncodeParams.encodeConfig->rcParams.vbvInitialDelay = 
           reconfigureParams.reInitEncodeParams.encodeConfig->rcParams.vbvBufferSize;
 
-  // reconfigure all the encoding sessions
-  for (int i = 0; i < nThread; i++)
-    vidEncThreads[i].encSession->Reconfigure(&reconfigureParams);
-}
-
-inline void TIHWEncoder::gatherEncodedData(std::vector<uint8_t>& encOutBuf, 
-  uint8_t* hostOutVidBuf, uint64_t &totalBitStreamSize, std::vector<EncodedFrameData>& hostEncodedData)
-{
-	EncodedFrameData frameData;
-	frameData.offset = 0;
-	frameData.data = hostOutVidBuf + totalBitStreamSize;
-	frameData.size = static_cast<uint32_t>(encOutBuf.size()); // get size of the bitstream chunk
-	std::memcpy(frameData.data, reinterpret_cast<char*>(encOutBuf.data()), encOutBuf.size());
-	totalBitStreamSize += frameData.size + frameData.offset; // increment copied size
-	hostEncodedData.push_back(std::ref(frameData));
+  penc->Reconfigure(&reconfigureParams);
 }

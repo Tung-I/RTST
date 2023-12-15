@@ -1024,6 +1024,8 @@ Ringmaster/CMakeFiles/sender.dir/TIHWEncoder.cc.o: ../Ringmaster/TIHWEncoder.cc 
   /usr/include/x86_64-linux-gnu/bits/fcntl-linux.h \
   /usr/include/linux/falloc.h \
   /usr/include/x86_64-linux-gnu/bits/fcntl2.h \
+  ../Ringmaster/EncMultiInstance.h \
+  /usr/include/c++/9/atomic \
   ../Ringmaster/Utils/conversion.hh
 
 Ringmaster/CMakeFiles/sender.dir/Utils/address.cc.o: ../Ringmaster/Utils/address.cc \
@@ -6301,6 +6303,8 @@ Ringmaster/CMakeFiles/sender.dir/sender.cpp.o: ../Ringmaster/sender.cpp \
   ../Ringmaster/Utils/timestamp.hh \
   ../Ringmaster/Utils/exception.hh \
   ../Ringmaster/Video/image.hh \
+  ../Ringmaster/EncMultiInstance.h \
+  /usr/include/c++/9/atomic \
   ../Ringmaster/Utils/timestamp.hh
 
 
@@ -7368,6 +7372,8 @@ Ringmaster/CMakeFiles/sender.dir/sender.cpp.o: ../Ringmaster/sender.cpp \
 
 /usr/include/x86_64-linux-gnu/bits/posix_opt.h:
 
+/usr/include/c++/9/atomic:
+
 /usr/include/wchar.h:
 
 /usr/include/x86_64-linux-gnu/bits/statx-generic.h:
@@ -7421,6 +7427,8 @@ Ringmaster/CMakeFiles/sender.dir/sender.cpp.o: ../Ringmaster/sender.cpp \
 /usr/include/c++/9/bits/fstream.tcc:
 
 /usr/include/x86_64-linux-gnu/bits/sockaddr.h:
+
+../Ringmaster/EncMultiInstance.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/9/include/avx2intrin.h:
 
