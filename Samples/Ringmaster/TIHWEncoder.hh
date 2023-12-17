@@ -68,14 +68,14 @@ public:
   void set_verbose(const bool verbose) { verbose_ = verbose; }
   void set_target_bitrate(const unsigned int bitrate_kbps);
 
+  //
+  uint64_t getEncodedFrameSize() { return vidEncThreads[0].encSession->GetFrameSize(); }
+
   // forbid copying and moving
   TIHWEncoder(const TIHWEncoder & other) = delete;
   const TIHWEncoder & operator=(const TIHWEncoder & other) = delete;
   TIHWEncoder(TIHWEncoder && other) = delete;
   TIHWEncoder & operator=(TIHWEncoder && other) = delete;
-
-  // cuda encoder interface
-  NvEncoderCuda *penc = NULL;
 
 private:
   uint16_t nWidth_;
@@ -106,14 +106,12 @@ private:
   // container
   std::vector<std::vector<uint8_t>> vPacket; 
   /////////////////////////////////////////
-
   int nThread = 1;
-  uint64_t numFramesPerVideoPortion = 10;
+  uint64_t numFramesPerVideoPortion = 1;
   // std::vector<ThreadData> vidEncThreads(nThread);
   // std::vector<IOEncoderMem> ioVideoMem(nThread);
   std::vector<ThreadData> vidEncThreads;
   std::vector<IOEncoderMem> ioVideoMem;
-  std::vector<ConcurrentQueue<encodeData>> encodeQueue;
   encodeData outputEncodeData;
   EncodedFrameData outputFrameData;
   

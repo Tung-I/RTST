@@ -162,19 +162,6 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named AppEncDec
-
-# Build rule for target.
-AppEncDec: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 AppEncDec
-.PHONY : AppEncDec
-
-# fast build rule for target.
-AppEncDec/fast:
-	$(MAKE) $(MAKESILENT) -f AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/build.make AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/build
-.PHONY : AppEncDec/fast
-
-#=============================================================================
 # Target rules for targets named sender
 
 # Build rule for target.
@@ -212,7 +199,6 @@ help:
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
-	@echo "... AppEncDec"
 	@echo "... receiver"
 	@echo "... sender"
 .PHONY : help

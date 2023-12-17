@@ -1,0 +1,232 @@
+[
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/sender.dir/sender.cpp.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/sender.cpp",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/sender.cpp"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/sender.dir/TIHWEncoder.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/TIHWEncoder.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/TIHWEncoder.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/sender.dir/TIHWDecoder.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/TIHWDecoder.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/TIHWDecoder.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/sender.dir/protocol.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/protocol.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/protocol.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/sender.dir/Utils/address.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Utils/address.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Utils/address.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/sender.dir/Utils/conversion.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Utils/conversion.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Utils/conversion.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/sender.dir/Utils/epoller.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Utils/epoller.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Utils/epoller.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/sender.dir/Utils/file_descriptor.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Utils/file_descriptor.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Utils/file_descriptor.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/sender.dir/Utils/mmap.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Utils/mmap.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Utils/mmap.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/sender.dir/Utils/poller.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Utils/poller.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Utils/poller.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/sender.dir/Utils/serialization.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Utils/serialization.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Utils/serialization.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/sender.dir/Utils/socket.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Utils/socket.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Utils/socket.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/sender.dir/Utils/split.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Utils/split.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Utils/split.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/sender.dir/Utils/timerfd.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Utils/timerfd.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Utils/timerfd.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/sender.dir/Utils/timestamp.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Utils/timestamp.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Utils/timestamp.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/sender.dir/Utils/udp_socket.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Utils/udp_socket.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Utils/udp_socket.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/sender.dir/Video/image.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Video/image.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Video/image.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/sender.dir/Video/sdl.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Video/sdl.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Video/sdl.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/sender.dir/Video/v4l2.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Video/v4l2.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Video/v4l2.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/sender.dir/Video/yuv4mpeg.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Video/yuv4mpeg.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Video/yuv4mpeg.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/sender.dir/__/NvCodec/NvEncoder/NvEncoder.cpp.o -c /home/tungi/RTS-testbed/Samples/NvCodec/NvEncoder/NvEncoder.cpp",
+  "file": "/home/tungi/RTS-testbed/Samples/NvCodec/NvEncoder/NvEncoder.cpp"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/sender.dir/__/NvCodec/NvEncoder/NvEncoderCuda.cpp.o -c /home/tungi/RTS-testbed/Samples/NvCodec/NvEncoder/NvEncoderCuda.cpp",
+  "file": "/home/tungi/RTS-testbed/Samples/NvCodec/NvEncoder/NvEncoderCuda.cpp"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/sender.dir/__/NvCodec/NvDecoder/NvDecoder.cpp.o -c /home/tungi/RTS-testbed/Samples/NvCodec/NvDecoder/NvDecoder.cpp",
+  "file": "/home/tungi/RTS-testbed/Samples/NvCodec/NvDecoder/NvDecoder.cpp"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/receiver.dir/receiver.cpp.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/receiver.cpp",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/receiver.cpp"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/receiver.dir/TIHWEncoder.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/TIHWEncoder.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/TIHWEncoder.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/receiver.dir/TIHWDecoder.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/TIHWDecoder.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/TIHWDecoder.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/receiver.dir/protocol.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/protocol.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/protocol.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/receiver.dir/Utils/address.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Utils/address.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Utils/address.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/receiver.dir/Utils/conversion.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Utils/conversion.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Utils/conversion.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/receiver.dir/Utils/epoller.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Utils/epoller.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Utils/epoller.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/receiver.dir/Utils/file_descriptor.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Utils/file_descriptor.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Utils/file_descriptor.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/receiver.dir/Utils/mmap.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Utils/mmap.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Utils/mmap.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/receiver.dir/Utils/poller.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Utils/poller.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Utils/poller.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/receiver.dir/Utils/serialization.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Utils/serialization.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Utils/serialization.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/receiver.dir/Utils/socket.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Utils/socket.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Utils/socket.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/receiver.dir/Utils/split.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Utils/split.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Utils/split.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/receiver.dir/Utils/timerfd.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Utils/timerfd.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Utils/timerfd.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/receiver.dir/Utils/timestamp.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Utils/timestamp.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Utils/timestamp.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/receiver.dir/Utils/udp_socket.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Utils/udp_socket.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Utils/udp_socket.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/receiver.dir/Video/image.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Video/image.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Video/image.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/receiver.dir/Video/sdl.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Video/sdl.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Video/sdl.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/receiver.dir/Video/v4l2.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Video/v4l2.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Video/v4l2.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/receiver.dir/Video/yuv4mpeg.cc.o -c /home/tungi/RTS-testbed/Samples/Ringmaster/Video/yuv4mpeg.cc",
+  "file": "/home/tungi/RTS-testbed/Samples/Ringmaster/Video/yuv4mpeg.cc"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/receiver.dir/__/NvCodec/NvEncoder/NvEncoder.cpp.o -c /home/tungi/RTS-testbed/Samples/NvCodec/NvEncoder/NvEncoder.cpp",
+  "file": "/home/tungi/RTS-testbed/Samples/NvCodec/NvEncoder/NvEncoder.cpp"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/receiver.dir/__/NvCodec/NvEncoder/NvEncoderCuda.cpp.o -c /home/tungi/RTS-testbed/Samples/NvCodec/NvEncoder/NvEncoderCuda.cpp",
+  "file": "/home/tungi/RTS-testbed/Samples/NvCodec/NvEncoder/NvEncoderCuda.cpp"
+},
+{
+  "directory": "/home/tungi/RTS-testbed/Samples/build/Ringmaster",
+  "command": "/usr/bin/g++-11  -I/usr/local/cuda/include -I/home/tungi/RTS-testbed/Samples/../Interface -I/home/tungi/RTS-testbed/Samples/Utils -I/home/tungi/RTS-testbed/Samples/NvCodec -I/home/tungi/RTS-testbed/Samples/Ringmaster/Utils -I/home/tungi/RTS-testbed/Samples/Ringmaster/Video -isystem /usr/include/SDL2 -g -D_REENTRANT -std=c++17 -o CMakeFiles/receiver.dir/__/NvCodec/NvDecoder/NvDecoder.cpp.o -c /home/tungi/RTS-testbed/Samples/NvCodec/NvDecoder/NvDecoder.cpp",
+  "file": "/home/tungi/RTS-testbed/Samples/NvCodec/NvDecoder/NvDecoder.cpp"
+}
+]

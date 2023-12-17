@@ -4,13 +4,6 @@
 /home/tungi/RTS-testbed/Samples/build/CMakeFiles/install.dir
 /home/tungi/RTS-testbed/Samples/build/CMakeFiles/install/local.dir
 /home/tungi/RTS-testbed/Samples/build/CMakeFiles/install/strip.dir
-/home/tungi/RTS-testbed/Samples/build/AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir
-/home/tungi/RTS-testbed/Samples/build/AppEncode/AppEncDec/CMakeFiles/edit_cache.dir
-/home/tungi/RTS-testbed/Samples/build/AppEncode/AppEncDec/CMakeFiles/rebuild_cache.dir
-/home/tungi/RTS-testbed/Samples/build/AppEncode/AppEncDec/CMakeFiles/list_install_components.dir
-/home/tungi/RTS-testbed/Samples/build/AppEncode/AppEncDec/CMakeFiles/install.dir
-/home/tungi/RTS-testbed/Samples/build/AppEncode/AppEncDec/CMakeFiles/install/local.dir
-/home/tungi/RTS-testbed/Samples/build/AppEncode/AppEncDec/CMakeFiles/install/strip.dir
 /home/tungi/RTS-testbed/Samples/build/Ringmaster/CMakeFiles/sender.dir
 /home/tungi/RTS-testbed/Samples/build/Ringmaster/CMakeFiles/receiver.dir
 /home/tungi/RTS-testbed/Samples/build/Ringmaster/CMakeFiles/edit_cache.dir

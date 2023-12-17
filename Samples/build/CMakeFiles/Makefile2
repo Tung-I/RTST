@@ -63,34 +63,16 @@ CMAKE_BINARY_DIR = /home/tungi/RTS-testbed/Samples/build
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: AppEncode/AppEncDec/all
 all: Ringmaster/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
-preinstall: AppEncode/AppEncDec/preinstall
 preinstall: Ringmaster/preinstall
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean: AppEncode/AppEncDec/clean
 clean: Ringmaster/clean
 .PHONY : clean
-
-#=============================================================================
-# Directory level rules for directory AppEncode/AppEncDec
-
-# Recursive "all" directory target.
-AppEncode/AppEncDec/all: AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/all
-.PHONY : AppEncode/AppEncDec/all
-
-# Recursive "preinstall" directory target.
-AppEncode/AppEncDec/preinstall:
-.PHONY : AppEncode/AppEncDec/preinstall
-
-# Recursive "clean" directory target.
-AppEncode/AppEncDec/clean: AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/clean
-.PHONY : AppEncode/AppEncDec/clean
 
 #=============================================================================
 # Directory level rules for directory Ringmaster
@@ -110,39 +92,13 @@ Ringmaster/clean: Ringmaster/CMakeFiles/receiver.dir/clean
 .PHONY : Ringmaster/clean
 
 #=============================================================================
-# Target rules for target AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir
-
-# All Build rule for target.
-AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/all:
-	$(MAKE) $(MAKESILENT) -f AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/build.make AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/depend
-	$(MAKE) $(MAKESILENT) -f AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/build.make AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tungi/RTS-testbed/Samples/build/CMakeFiles --progress-num=1,2,3,4,5,6,7 "Built target AppEncDec"
-.PHONY : AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/all
-
-# Build rule for subdir invocation for target.
-AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/tungi/RTS-testbed/Samples/build/CMakeFiles 7
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/tungi/RTS-testbed/Samples/build/CMakeFiles 0
-.PHONY : AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/rule
-
-# Convenience name for target.
-AppEncDec: AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/rule
-.PHONY : AppEncDec
-
-# clean rule for target.
-AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/clean:
-	$(MAKE) $(MAKESILENT) -f AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/build.make AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/clean
-.PHONY : AppEncode/AppEncDec/CMakeFiles/AppEncDec.dir/clean
-
-#=============================================================================
 # Target rules for target Ringmaster/CMakeFiles/sender.dir
 
 # All Build rule for target.
 Ringmaster/CMakeFiles/sender.dir/all:
 	$(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/sender.dir/build.make Ringmaster/CMakeFiles/sender.dir/depend
 	$(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/sender.dir/build.make Ringmaster/CMakeFiles/sender.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tungi/RTS-testbed/Samples/build/CMakeFiles --progress-num=34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58 "Built target sender"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tungi/RTS-testbed/Samples/build/CMakeFiles --progress-num=27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51 "Built target sender"
 .PHONY : Ringmaster/CMakeFiles/sender.dir/all
 
 # Build rule for subdir invocation for target.
@@ -168,7 +124,7 @@ Ringmaster/CMakeFiles/sender.dir/clean:
 Ringmaster/CMakeFiles/receiver.dir/all:
 	$(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/receiver.dir/build.make Ringmaster/CMakeFiles/receiver.dir/depend
 	$(MAKE) $(MAKESILENT) -f Ringmaster/CMakeFiles/receiver.dir/build.make Ringmaster/CMakeFiles/receiver.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tungi/RTS-testbed/Samples/build/CMakeFiles --progress-num=8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33 "Built target receiver"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tungi/RTS-testbed/Samples/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26 "Built target receiver"
 .PHONY : Ringmaster/CMakeFiles/receiver.dir/all
 
 # Build rule for subdir invocation for target.

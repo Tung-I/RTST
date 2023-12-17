@@ -32,7 +32,7 @@ TIHWEncoder::TIHWEncoder(const uint16_t nWidth,
                  const uint16_t frame_rate,
                  const string & output_path)
   : nWidth_(nWidth), nHeight_(nHeight), frame_rate_(frame_rate), output_fd_(),
-  vidEncThreads(nThread), ioVideoMem(nThread), encodeQueue(nThread)
+  vidEncThreads(nThread), ioVideoMem(nThread)
   {
   
   if (not output_path.empty()) {  // for logging
@@ -65,11 +65,8 @@ TIHWEncoder::TIHWEncoder(const uint16_t nWidth,
 
   // Create nvenc cuda interface
   ck(cuCtxCreate(&cuContext, 0, cuDevice));  
-  penc = new NvEncoderCuda(cuContext, nWidth, nHeight, eInputFormat, 3, false, false, false);
   // Set the config and initialize params
   initializeParams.encodeConfig = &encodeConfig; 
-  penc->CreateDefaultEncoderParams(&initializeParams, pEncodeCLIOptions->GetEncodeGUID(), 
-      pEncodeCLIOptions->GetPresetGUID(), pEncodeCLIOptions->GetTuningInfo());
 
   // Create and initialize array of data required for each encoding session thread 
   ck(cuCtxCreate(&(cuContext), CU_CTX_SCHED_BLOCKING_SYNC, cuDevice)); // Create single CUDA context
@@ -77,7 +74,7 @@ TIHWEncoder::TIHWEncoder(const uint16_t nWidth,
     vidEncThreads[i].cuContext = &cuContext; // same CUDA context for every encoding session thread
     // safely cast nWidth to uint32_t
 
-    vidEncThreads[i].encSession = make_unique<NvEncoderCuda>(cuContext, 
+    vidEncThreads[i].encSession = make_it_unique<NvEncoderCuda>(cuContext, 
       static_cast<int32_t>(nWidth), static_cast<int32_t>(nHeight), eInputFormat);
     vidEncThreads[i].encSession->CreateDefaultEncoderParams(&initializeParams, 
       pEncodeCLIOptions->GetEncodeGUID(), pEncodeCLIOptions->GetPresetGUID(), pEncodeCLIOptions->GetTuningInfo());
@@ -119,7 +116,7 @@ TIHWEncoder::TIHWEncoder(const uint16_t nWidth,
 
 TIHWEncoder::~TIHWEncoder()
 {
-  penc->DestroyEncoder();
+  for (int i = 0; i < nThread; i++) vidEncThreads[i].encSession->DestroyEncoder();
 }
 
 void TIHWEncoder::compress_frame(const std::unique_ptr<uint8_t[]>& pHostFrame)
@@ -179,6 +176,7 @@ void TIHWEncoder::encode_frame(const std::unique_ptr<uint8_t[]>& pHostFrame)
 
   /////////////////////////////////////////////////////////////////////
   // Create encode work queues
+  std::vector<ConcurrentQueue<encodeData>> encodeQueue(nThread);
   for (int i = 0; i < nThread; i++){
     // video ENCODING thread work queue generation
     encodeData currEncData;
@@ -188,7 +186,7 @@ void TIHWEncoder::encode_frame(const std::unique_ptr<uint8_t[]>& pHostFrame)
     currEncData.vidPortionNum = 0;
     currEncData.vidThreadIdx = i;
     currEncData.ioVideoMem = &ioVideoMem[i];
-    currEncData.isLast = 0; // check if last to end thread
+    currEncData.isLast = 1; // check if last to end thread
     currEncData.isSingleThread = (nThread == 1);
     encodeQueue[i].push_back(currEncData); // queue encode work
   }
@@ -198,10 +196,11 @@ void TIHWEncoder::encode_frame(const std::unique_ptr<uint8_t[]>& pHostFrame)
 	{
     std::atomic<bool> encoderWorking(true);
     std::vector<std::thread> encodeThread(nThread);
-    for (int i = 0; i < nThread; i++)
+    for (int i = 0; i < nThread; i++){
+      LOG(LogLevel::INFO) << "Spawn thread " << i;
       encodeThread[i] = std::thread(&TIHWEncoder::asyncEncode, this, 
         std::ref(encodeQueue[i]), std::ref(encoderWorking), std::ref(pHostFrame));
-
+    }
     StopWatch processingTime;
     processingTime.Start();
     for (int i = 0; i < nThread; i++) encodeThread[i].join();
@@ -209,14 +208,16 @@ void TIHWEncoder::encode_frame(const std::unique_ptr<uint8_t[]>& pHostFrame)
   }
   catch (const std::exception &ex)
 	{
-		std::cout << ex.what();
+    LOG(LogLevel::ERROR) << "Error: " << ex.what();
 	}
 
   // TODO: make a decision on which thread's output to acquire
+  //debug
+  LOG(LogLevel::INFO) << "encodeQueue[0] size: " << encodeQueue[0].size();
   outputEncodeData = encodeQueue[0].pop_front();
+  LOG(LogLevel::INFO) << "After pop";
   std::cout << outputEncodeData.ioVideoMem->hostEncodedData.size() << endl;
   // raise an exception if the output is empty
-  throw runtime_error("stop here");
 
   // std::memcpy(vPacket[0].data(), outputEncodeData.ioVideoMem->hostOutBuf.data, 
   //   outputEncodeData.ioVideoMem->hostOutBuf.size);
@@ -239,10 +240,12 @@ void TIHWEncoder::asyncEncode(ConcurrentQueue<encodeData>& encodeQueue, std::ato
     enc = encodeQueue.pop_front();
     safeBuffer* inSafeBuf = &enc.ioVideoMem->hostInBuf;
 		safeBuffer* outSafeBuf = &enc.ioVideoMem->hostOutBuf;
-    std::unique_lock<std::mutex> outLock{ outSafeBuf->mutex };
-    while (!outSafeBuf->readyToEdit) {
-      outSafeBuf->condVarReady.wait(outLock); // wait until OUTPUT buffer is ready to be EDITED
-    }
+
+    // std::unique_lock<std::mutex> outLock{ outSafeBuf->mutex }; 
+    // while (!outSafeBuf->readyToEdit) {
+    //   outSafeBuf->condVarReady.wait(outLock); // wait until OUTPUT buffer is ready to be EDITED
+    // }
+
     enc.ioVideoMem->hostEncodedData.clear(); // clear last ouput data
 		uint64_t nFrameSize = enc.threadData->encSession->GetFrameSize();
     uint64_t totalBitStreamSize = 0; // need to keep track of the size of each compressed frame
@@ -275,17 +278,28 @@ void TIHWEncoder::asyncEncode(ConcurrentQueue<encodeData>& encodeQueue, std::ato
       ); 
 
       enc.threadData->encSession->EncodeFrame(encOutBuf, &nvEncPicParams);
+
       for (uint32_t j = 0; j < encOutBuf.size(); ++j) { // gather encoded data in output buffer
+        gatherEncodedData(encOutBuf[j], outSafeBuf->data, totalBitStreamSize, enc.ioVideoMem->hostEncodedData);
+      }
+    }
+    if (!enc.isSingleThread || enc.isLast) {
+      enc.threadData->encSession->EndEncode(encOutBuf); // get last compressed frames
+      for (uint32_t j = 0; j < encOutBuf.size(); ++j) { // gather encoded data in output buffer to write to file later
         gatherEncodedData(encOutBuf[j], outSafeBuf->data, totalBitStreamSize, enc.ioVideoMem->hostEncodedData);
       }
     }
 
     outSafeBuf->readyToEdit = false; // OUTPUT buffer is ready to be READ
+    LOG(LogLevel::INFO) << "OUTPUT buffer is ready to be READ";
 		outSafeBuf->condVarReady.notify_all();
-    encoderWorking = false;
-		break;
+    LOG(LogLevel::INFO) << "Notified all";
+    if (enc.isLast) { // if last end thread
+			encoderWorking = false;
+			break;
+		}
+    
   }
-
 
 }
 

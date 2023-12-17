@@ -1,3 +1,2 @@
-/home/tungi/RTS-testbed/Samples/build/AppEncDec
 /home/tungi/RTS-testbed/Samples/build/sender
 /home/tungi/RTS-testbed/Samples/build/receiver

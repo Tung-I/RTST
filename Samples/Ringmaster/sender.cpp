@@ -151,7 +151,7 @@ int main(int argc, char * argv[])
   encoder.set_verbose(verbose);
 
   // Allocate a host frame container
-  int nHostFrameSize = encoder.penc->GetFrameSize(); 
+  int nHostFrameSize = encoder.getEncodedFrameSize(); 
   std::unique_ptr<uint8_t[]> pHostFrame(new uint8_t[nHostFrameSize]); 
 
   // Create a periodic timer

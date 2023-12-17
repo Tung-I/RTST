@@ -1,0 +1,41 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Sender",
+            "type": "cuda-gdb",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/sender",
+            "args": "12345 /home/tungi/datasets/upscale/demo4k.yuv", 
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "preLaunchTask": "Build All", 
+        }
+        // {
+        //     "name": "Debug Sender",
+        //     // "type": "cppdbg",
+        //     "type": "cuda-gdb",
+        //     "request": "launch",
+        //     "program": "${workspaceFolder}/build/sender",
+        //     "args": ["12345", "/home/tungi/datasets/upscale/demo4k.yuv"], 
+        //     "stopAtEntry": false,
+        //     "cwd": "${workspaceFolder}",
+        //     "environment": [],
+        //     "externalConsole": false,
+        //     "MIMode": "gdb",
+        //     "setupCommands": [
+        //         {
+        //             "description": "Enable pretty-printing for gdb",
+        //             "text": "-enable-pretty-printing",
+        //             "ignoreFailures": true
+        //         }
+        //     ],
+        //     "preLaunchTask": "Build All", 
+        //     "miDebuggerPath": "/usr/bin/gdb" 
+        // }
+    ]
+}
