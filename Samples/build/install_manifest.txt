@@ -1,2 +1,0 @@
-/home/tungi/RTS-testbed/Samples/build/sender
-/home/tungi/RTS-testbed/Samples/build/receiver

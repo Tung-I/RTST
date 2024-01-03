@@ -1,0 +1,2 @@
+/home/ubuntu/RTST/src/build/sender
+/home/ubuntu/RTST/src/build/receiver

@@ -2,17 +2,42 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "cmake build",
+            "label": "CMake Configure",
             "type": "shell",
             "command": "cmake",
             "args": [
-                "--build",
+                "-DCMAKE_BUILD_TYPE=Debug",
+                "-S",
+                "${workspaceFolder}",
+                "-B",
                 "${workspaceFolder}/build"
             ],
+            "group": "build"
+        },
+        {
+            "label": "Make Install",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "install",
+                "-C",
+                "${workspaceFolder}/build"
+            ],
+            "group": "build",
+            "dependsOn": ["CMake Configure"]
+        },
+        {
+            "label": "Build All",
+            "type": "shell",
+            "command": "echo",
+            "args": ["Building..."],
             "group": {
                 "kind": "build",
                 "isDefault": true
-            }
+            },
+            "dependsOn": ["CMake Configure", "Make Install"]
         }
+        
+
     ]
 }
